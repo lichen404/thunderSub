@@ -1,13 +1,13 @@
 import React from 'react';
 import {hot} from 'react-hot-loader'
-import Header from './components/Header';
+import Upload from './components/Upload';
 
 const App: React.FC = () => {
     return (
         <>
         <h1>Hello World</h1>
-            <span>12</span>
-            <Header/>
+
+            <Upload/>
             </>
     );
 };
