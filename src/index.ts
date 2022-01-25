@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import {app, BrowserWindow, net,ipcMain} from 'electron';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -41,6 +41,20 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+
+ipcMain.handle('upload-file',()=>{
+  const request = net.request('https://xunlei.com')
+  request.on('response',(response => {
+    response.on('data',(chunk)=>{
+        console.log(chunk)
+    })
+  }))
+  request.on('error',(error)=>{
+    console.log(error)
+  })
+
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
