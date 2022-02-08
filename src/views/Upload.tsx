@@ -3,18 +3,22 @@ import styled from "styled-components";
 import {ipcRenderer} from "electron";
 import {useHistory} from "react-router-dom";
 import {Context} from "../context";
+import Icon from "../components/Icon";
 
 
 const UploadWrapper = styled.div`
   width: 256px;
   height: 256px;
   background: #fafafa;
-  border: 1px dashed #d9d9d9;
+  border: 2px dashed #d9d9d9;
 
   > label {
     width: 100%;
     height: 100%;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction: column;
 
     input {
       display: none;
@@ -38,14 +42,14 @@ const Upload: React.FC = () => {
     }
     return (
         <>
-            <div>upload</div>
+            <Icon name="loading"/>
             <UploadWrapper>
                 <label onDrop={handleUpload} onDragOver={
                     (e) => {
                         e.preventDefault();
                     }
-                }>
-                    <span>将文件拖拽至此，或点击上传</span>
+                }><Icon name="upload-video" className="upload-video"/>
+                    <span>将视频拖拽至此，或点击选择</span>
                     <input type="file" onChange={
                         handleUpload
                     }/>

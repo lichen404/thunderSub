@@ -13,7 +13,11 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": [
+      "node",
+      "webpack-env"
+    ]
   },
   "include": [
     "src/**/*"
