@@ -6,26 +6,39 @@ import NoMatch from "./views/NoMatch";
 import Context from "./context";
 import React, {FC} from "react";
 import Nav from "./components/Nav";
+import SideBar from "./components/SideBar";
+import styled from "styled-components";
 
+
+const AppWrapper = styled.div`
+  display: flex;
+  min-height: calc(100vh - 30px);
+  
+`
 const App: FC = () => {
 
     return (
         <Context>
             <Nav/>
-            <Router>
-                <Switch>
-                    <Route path="/upload" exact>
-                        <Upload/>
-                    </Route>
-                    <Route path="/:file/list" exact>
-                        <List/>
-                    </Route>
-                    <Redirect exact from="/" to='/upload'/>
-                    <Route path="*">
-                        <NoMatch/>
-                    </Route>
-                </Switch>
-            </Router>
+            <AppWrapper>
+                <SideBar/>
+                <main>
+                    <Router>
+                        <Switch>
+                            <Route path="/upload" exact>
+                                <Upload/>
+                            </Route>
+                            <Route path="/:file/list" exact>
+                                <List/>
+                            </Route>
+                            <Redirect exact from="/" to='/upload'/>
+                            <Route path="*">
+                                <NoMatch/>
+                            </Route>
+                        </Switch>
+                    </Router>
+                </main>
+            </AppWrapper>
         </Context>
 
     );

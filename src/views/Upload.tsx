@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import styled from "styled-components";
 import {ipcRenderer} from "electron";
 import {useHistory} from "react-router-dom";
@@ -17,7 +17,7 @@ const UploadWrapper = styled.div`
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     flex-direction: column;
 
     input {
@@ -25,24 +25,41 @@ const UploadWrapper = styled.div`
     }
   }
 `
+const Shadow = styled.div`
+  width: 100vw;
+  height: calc(100vh - 30px);
+  opacity: 0.2;
+  background-color: blue;
+  position:fixed;
+  top:30px;
+  left: 0;
+  font-size: 256px;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  flex-direction: column;
+`
 
 
 const Upload: React.FC = () => {
     const history = useHistory()
     const {setFileList} = useContext(Context)
+    const [isLoading, setIsLoading] = useState(false)
     const handleUpload = async (e: any) => {
         const payload = {
             videoName: e.dataTransfer?.files[0].name || e.target.files[0].name,
             videoPath: e.dataTransfer?.files[0].path || e.target.files[0].path
         }
+        setIsLoading(true)
         const data = await ipcRenderer.invoke('upload-file', payload)
         setFileList(data)
+        setIsLoading(false)
 
         history.push(`/${payload.videoName}/list`)
     }
     return (
         <>
-            <Icon name="loading"/>
+            {isLoading && <Shadow><Icon name="loading"/></Shadow>}
             <UploadWrapper>
                 <label onDrop={handleUpload} onDragOver={
                     (e) => {
