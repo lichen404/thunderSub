@@ -1,7 +1,7 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import {ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
-
+import os from 'os';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -13,11 +13,14 @@ const instance = axios.create({
     timeout: 1000 * 30
 })
 
+console.log(os.homedir())
+
 const createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
+        frame:false,
         webPreferences: {
             nodeIntegration: true
         }
@@ -55,8 +58,8 @@ app.on('activate', () => {
 
 ipcMain.handle('upload-file', async (event, payload) => {
     const videoLength = await new Promise((resolve, reject) => {
-        ffprobe(payload.videoPath.replace(/\\/g, '/'), (error: any, metadata: any) => {
-
+        const videoPath = process.platform === 'win32' ? payload.videoPath.replace(/\\/g, '/'):payload.videoPath
+        ffprobe(videoPath, (error: any, metadata: any) => {
             error ? reject(error) : resolve(metadata.format.duration);
         })
     })

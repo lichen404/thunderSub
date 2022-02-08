@@ -2,8 +2,7 @@ import React, {FC} from 'react';
 import cs from 'classnames';
 const  importAll = (requireContext: __WebpackModuleApi.RequireContext) => requireContext.keys().forEach(requireContext);
 try {
-    importAll(require.context('../icons', true, /\.svg$/))
-    console.log('123')
+    importAll(require.context('../assets/icons', true, /\.svg$/))
 } catch (e) {
     console.log(e)
 }

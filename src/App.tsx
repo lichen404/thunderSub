@@ -5,11 +5,13 @@ import List from "./views/List";
 import NoMatch from "./views/NoMatch";
 import Context from "./context";
 import React, {FC} from "react";
+import Nav from "./components/Nav";
 
 const App: FC = () => {
 
     return (
         <Context>
+            <Nav/>
             <Router>
                 <Switch>
                     <Route path="/upload" exact>

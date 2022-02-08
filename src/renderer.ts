@@ -26,6 +26,6 @@
  * ```
  */
 import './index.tsx';
-import './index.css';
+import './assets/index.css';
 
 console.log('👋 This message is being logged by "renderer.js", included via webpack');
