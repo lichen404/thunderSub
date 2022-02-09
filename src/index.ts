@@ -10,7 +10,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 }
 const instance = axios.create({
     baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json',
-    timeout: 1000 * 30
+    timeout: 1000 * 60 * 3
 })
 
 console.log(os.homedir())
