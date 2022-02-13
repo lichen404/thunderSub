@@ -2,6 +2,7 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import {ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
 import os from 'os';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -13,14 +14,16 @@ const instance = axios.create({
     timeout: 1000 * 60 * 3
 })
 
+let mainWindow: BrowserWindow
+
 console.log(os.homedir())
 
 const createWindow = (): void => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
-        frame:false,
+        frame: false,
         webPreferences: {
             nodeIntegration: true
         }
@@ -58,7 +61,7 @@ app.on('activate', () => {
 
 ipcMain.handle('upload-file', async (event, payload) => {
     const videoLength = await new Promise((resolve, reject) => {
-        const videoPath = process.platform === 'win32' ? payload.videoPath.replace(/\\/g, '/'):payload.videoPath
+        const videoPath = process.platform === 'win32' ? payload.videoPath.replace(/\\/g, '/') : payload.videoPath
         ffprobe(videoPath, (error: any, metadata: any) => {
             error ? reject(error) : resolve(metadata.format.duration);
         })
@@ -70,6 +73,31 @@ ipcMain.handle('upload-file', async (event, payload) => {
     return data
 
 })
+
+ipcMain.on('close-window', () => {
+    mainWindow.close()
+})
+
+ipcMain.on('maximize-window', () => {
+
+
+    mainWindow.maximize()
+
+})
+
+ipcMain.on('fixed-window',(event,isFixed:boolean)=>{
+    mainWindow.setAlwaysOnTop(isFixed)
+})
+
+ipcMain.on('resize-window', () => {
+    mainWindow.restore()
+})
+
+ipcMain.on('minimize-window', () => {
+
+    mainWindow.minimize()
+})
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

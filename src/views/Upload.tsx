@@ -26,16 +26,16 @@ const UploadWrapper = styled.div`
   }
 `
 const Shadow = styled.div`
-  width: 100vw;
+  width: 100%;
   height: calc(100vh - 30px);
-  opacity: 0.2;
-  background-color: blue;
-  position:fixed;
-  top:30px;
+  opacity: 0.4;
+  background-color: rgba(0, 0, 0);
+  position: fixed;
+  top: 30px;
   left: 0;
   font-size: 256px;
   display: flex;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
   flex-direction: column;
 `
