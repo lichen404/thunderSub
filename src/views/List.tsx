@@ -2,6 +2,7 @@ import React, {FC, useContext} from "react";
 import {useHistory} from "react-router-dom";
 import {Context} from "../context";
 import SubTable from "../components/Table";
+import Layout from "../components/Layout";
 
 const List: FC = () => {
     const history = useHistory()
@@ -9,7 +10,7 @@ const List: FC = () => {
     console.log(fileList)
 
     return (
-        <>
+        <Layout>
             <SubTable columns={
                 [
                     {
@@ -34,7 +35,7 @@ const List: FC = () => {
                 history.push('/')
             }}>back
             </button>
-        </>
+        </Layout>
     )
 }
 

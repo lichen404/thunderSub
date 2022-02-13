@@ -1,7 +1,8 @@
 import React, {FC} from "react";
+import Layout from "../components/Layout";
 
 
 const NoMatch: FC = () => {
-    return <div>NoMatch</div>
+    return <Layout>NoMatch</Layout>
 }
 export default NoMatch

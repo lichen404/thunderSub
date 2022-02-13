@@ -39,17 +39,18 @@ const NavWrapper = styled.nav`
 const Nav: FC = () => {
     const [isMaxWindow, setIsMaxWindow] = useState(false)
     const [isFixedWindow, setIsFixedWindow] = useState(false)
-    const {isSideBarVisible, setIsSideBarVisible} = useContext(Context)
+    const {setIsSidebarVisible} = useContext(Context)
     return <NavWrapper>
         <ul>
             <li onClick={() => {
-                setIsSideBarVisible(!isSideBarVisible)
+                setIsSidebarVisible(true)
+
             }
             }>
                 <Icon name="menu-on"/>
             </li>
             <li onClick={() => {
-                ipcRenderer.send('fixed-window',!isFixedWindow)
+                ipcRenderer.send('fixed-window', !isFixedWindow)
                 setIsFixedWindow(!isFixedWindow)
             }
             } style={isFixedWindow ? {background: '#e2e2e2'} : {}}>

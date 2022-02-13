@@ -4,6 +4,7 @@ import {ipcRenderer} from "electron";
 import {useHistory} from "react-router-dom";
 import {Context} from "../context";
 import Icon from "../components/Icon";
+import Layout from "../components/Layout";
 
 
 const UploadWrapper = styled.div`
@@ -58,7 +59,7 @@ const Upload: React.FC = () => {
         history.push(`/${payload.videoName}/list`)
     }
     return (
-        <>
+        <Layout>
             {isLoading && <Shadow><Icon name="loading"/></Shadow>}
             <UploadWrapper>
                 <label onDrop={handleUpload} onDragOver={
@@ -74,7 +75,7 @@ const Upload: React.FC = () => {
             </UploadWrapper>
 
 
-        </>
+        </Layout>
     )
 }
 export default Upload;
