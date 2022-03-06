@@ -7,6 +7,7 @@ import SideBar from "./SideBar";
 const AppWrapper = styled.div`
   
   min-height: calc(100vh - 30px);
+  display: flex;
 
 `
 const Layout: FC = ({children}) => {

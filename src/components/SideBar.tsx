@@ -2,7 +2,7 @@ import {FC, useContext} from "react";
 import styled from "styled-components";
 import {NavLink} from "react-router-dom";
 import Icon from "./Icon";
-import ContextProvider, {Context} from "../context";
+import {Context} from "../context";
 
 const SideBarWrapper = styled.ul`
 
