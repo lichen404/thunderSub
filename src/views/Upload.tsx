@@ -47,16 +47,23 @@ const Upload: React.FC = () => {
     const {setFileList} = useContext(Context)
     const [isLoading, setIsLoading] = useState(false)
     const handleUpload = async (e: any) => {
+
         const payload = {
             videoName: e.dataTransfer?.files[0].name || e.target.files[0].name,
             videoPath: e.dataTransfer?.files[0].path || e.target.files[0].path
         }
         setIsLoading(true)
-        const data = await ipcRenderer.invoke('upload-file', payload)
-        setFileList(data)
-        setIsLoading(false)
 
-        history.push(`/${payload.videoName}/list`)
+        const data = await ipcRenderer.invoke('upload-file', payload).catch(e => {
+            console.log(e)
+        })
+        if (data) {
+
+            setFileList(data.sublist.filter(((sub: any) => sub.surl)))
+            history.push(`/${payload.videoName}/list`)
+        }
+        setIsLoading(false)
+        e.target.value = null
     }
     return (
         <Layout>

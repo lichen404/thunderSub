@@ -5,7 +5,7 @@ import SideBar from "./SideBar";
 
 
 const AppWrapper = styled.div`
-  display: flex;
+  
   min-height: calc(100vh - 30px);
 
 `

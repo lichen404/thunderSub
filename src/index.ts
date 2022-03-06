@@ -2,6 +2,8 @@ import {app, BrowserWindow, ipcMain} from 'electron';
 import {ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
 import os from 'os';
+import path from "path";
+import fs from "fs";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
@@ -11,12 +13,11 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 }
 const instance = axios.create({
     baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json',
-    timeout: 1000 * 60 * 3
+    timeout:1000 * 60 * 3
 })
 
 let mainWindow: BrowserWindow
 
-console.log(os.homedir())
 
 const createWindow = (): void => {
     // Create the browser window.
@@ -67,11 +68,31 @@ ipcMain.handle('upload-file', async (event, payload) => {
         })
     })
 
-    const {data} = await instance.get(
-        `/mname=${encodeURI(payload.videoName)}&videolength=${(parseFloat(videoLength as string) * 1000).toString()}`
-    )
-    return data
+    try {
+        const {data} = await instance.get(
+            `/mname=${encodeURI(payload.videoName)}&videolength=${(parseFloat(videoLength as string) * 1000).toString()}`
+        )
+        return data
+    } catch (error) {
+        console.log(error)
+        return Promise.reject(error)
+    }
 
+
+})
+const subPath = `${os.homedir()}/Documents/ThunderSub`
+ipcMain.on('download-sub', async (event, {name, url}: { name: string, url: string }) => {
+    if (!fs.existsSync(subPath)) {
+        fs.mkdirSync(subPath);
+    }
+    if (url) {
+        const myPath = path.resolve(subPath, name);
+        const writer = fs.createWriteStream(myPath);
+        const response = await axios.get(url, {
+            responseType: 'stream'
+        })
+        response.data.pipe(writer);
+    }
 })
 
 ipcMain.on('close-window', () => {
@@ -85,7 +106,7 @@ ipcMain.on('maximize-window', () => {
 
 })
 
-ipcMain.on('fixed-window',(event,isFixed:boolean)=>{
+ipcMain.on('fixed-window', (event, isFixed: boolean) => {
     mainWindow.setAlwaysOnTop(isFixed)
 })
 

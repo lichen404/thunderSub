@@ -28,6 +28,7 @@ const TableWrapper = styled.table`
 `
 
 const SubTable: FC<SubTableProps> = ({columns, data}) => {
+
     return <TableWrapper>
         <thead>
         <tr>
@@ -37,12 +38,12 @@ const SubTable: FC<SubTableProps> = ({columns, data}) => {
         </thead>
         <tbody>
         {
-            data.map((rowData: any) => {
+            data.map((rowData: any,index) => {
                 return (
-                    <tr>
+                    <tr key={index}>
                         {
                             columns.map((column) =>
-                                <td>{column.render ? column.render(rowData, rowData[column.dataIndex]) : rowData[column.dataIndex]}</td>)
+                                <td key={column.dataIndex}>{column.render ? column.render(rowData[column.dataIndex],rowData ) : rowData[column.dataIndex]}</td>)
                         }
                     </tr>
                 )
