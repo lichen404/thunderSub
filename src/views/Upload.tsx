@@ -41,11 +41,18 @@ const Shadow = styled.div`
   flex-direction: column;
 `
 
+const SideBarShadow = styled.div`
+  width: 200px;
+  height: calc(100vh - 30px);
+`
+
 
 const Upload: React.FC = () => {
     const history = useHistory()
-    const {setFileList} = useContext(Context)
+    const {setFileList,isSidebarVisible} = useContext(Context)
     const [isLoading, setIsLoading] = useState(false)
+    console.log(isSidebarVisible)
+
     const handleUpload = async (e: any) => {
 
         const payload = {
@@ -68,13 +75,14 @@ const Upload: React.FC = () => {
     return (
         <Layout>
             {isLoading && <Shadow><Icon name="loading"/></Shadow>}
+            {isSidebarVisible && <SideBarShadow/>}
             <UploadWrapper>
                 <label onDrop={handleUpload} onDragOver={
                     (e) => {
                         e.preventDefault();
                     }
                 }><Icon name="upload-video" className="upload-video"/>
-                    <span>将视频拖拽至此，或点击选择</span>
+                    <span>将视频文件拖拽至此，或点击选择</span>
                     <input type="file" onChange={
                         handleUpload
                     }/>

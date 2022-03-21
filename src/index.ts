@@ -1,10 +1,25 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
-import {ffprobe} from 'fluent-ffmpeg'
+import ffmpeg,{ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
 import os from 'os';
 import path from "path";
 import fs from "fs";
 import qs from "qs";
+
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ffmpegPath = require('ffmpeg-static').replace(
+    'app.asar',
+    'app.asar.unpacked'
+);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ffprobePath = require('ffprobe-static').path.replace(
+    'app.asar',
+    'app.asar.unpacked'
+)
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 

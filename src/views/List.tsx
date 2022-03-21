@@ -8,7 +8,6 @@ import {ipcRenderer} from "electron";
 const List: FC = () => {
     const history = useHistory()
     const {fileList} = useContext(Context)
-    console.log(fileList)
     return (
         <Layout>
             <SubTable columns={
@@ -32,9 +31,9 @@ const List: FC = () => {
                     },
                     {
                         dataIndex: 'surl',
-                        render(url,file) {
+                        render(url, file) {
                             return <button onClick={() => {
-                                ipcRenderer.send('download-sub', {url,name:`${file.sname}.${file.sext}`})
+                                ipcRenderer.send('download-sub', {url, name: `${file.sname}.${file.sext}`})
                             }
                             }>下载</button>
                         }
