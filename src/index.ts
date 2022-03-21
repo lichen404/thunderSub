@@ -4,6 +4,7 @@ import axios from "axios";
 import os from 'os';
 import path from "path";
 import fs from "fs";
+import qs from "qs";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
@@ -12,7 +13,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
     app.quit();
 }
 const instance = axios.create({
-    baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json',
+    baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json/',
     timeout:1000 * 60 * 3
 })
 
@@ -70,7 +71,10 @@ ipcMain.handle('upload-file', async (event, payload) => {
 
     try {
         const {data} = await instance.get(
-            `/mname=${encodeURI(payload.videoName)}&videolength=${(parseFloat(videoLength as string) * 1000).toString()}`
+            qs.stringify({
+                mname:payload.videoName,
+                videolength:(parseFloat(videoLength as string) * 1000).toString()
+            })
         )
         return data
     } catch (error) {
