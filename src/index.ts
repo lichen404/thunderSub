@@ -6,6 +6,11 @@ import path from "path";
 import fs from "fs";
 import qs from "qs";
 
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+    app.quit();
+}
+
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ffmpegPath = require('ffmpeg-static').replace(
@@ -23,10 +28,7 @@ ffmpeg.setFfprobePath(ffprobePath);
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-    app.quit();
-}
+
 const instance = axios.create({
     baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json/',
     timeout:1000 * 60 * 3

@@ -8,7 +8,7 @@ rules.push({
 
 rules.push({
     test: /\.svg$/,
-    use: [{loader: 'svg-sprite-loader'},{loader: 'svgo-loader',options:{plugins:[{name:"removeAttrs",params:{attrs:'fill'}}]}}]
+    use: [{loader: 'svg-sprite-loader'},{loader: 'svgo-loader'}]
 })
 
 module.exports = {

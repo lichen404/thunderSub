@@ -8,6 +8,7 @@ import {Context} from "../context";
 const NavWrapper = styled.nav`
   max-height: 30px;
   -webkit-app-region: drag;
+  background-color:#343442;
 
   > ul {
     width: 100%;
@@ -28,7 +29,8 @@ const NavWrapper = styled.nav`
       }
 
       &:hover {
-        background: #e2e2e2;
+       background-color: hsla(0,0%,98%,.2);
+        
       }
     }
 

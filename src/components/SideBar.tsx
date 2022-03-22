@@ -5,9 +5,9 @@ import Icon from "./Icon";
 import {Context} from "../context";
 
 const SideBarWrapper = styled.aside`
-  
+
   > ul {
-    background-color: #f0f0f0;
+    background-color: #42424e;
     transition: all .3s;
     position: absolute;
     top: 0;
@@ -27,15 +27,19 @@ const SideBarWrapper = styled.aside`
 
       &:hover {
 
-        background-color: #b8bfc6;
+        background-color: #2c2a38;
       }
 
       &.close-button-wrapper {
-        background: #f0f0f0;
+
         display: flex;
+        justify-content: flex-end;
         align-items: center;
-        padding: 0 8px 0 32px;
-        justify-content: space-between;
+        padding-right: 20px;
+        cursor: pointer;
+        &:hover {
+          background-color: #42424e;
+        }
 
 
         > h3 {
@@ -55,10 +59,10 @@ const SideBarWrapper = styled.aside`
         display: block;
         width: 100%;
         padding-left: 32px;
-        color: #000;
+
 
         &.selected {
-          background-color: #b8bfc6;
+          background-color: #2c2a38;
         }
 
 
@@ -80,13 +84,13 @@ const SideBar: FC = () => {
 
 
         <SideBarWrapper>
-            <ul className={isSidebarVisible && 'open-sidebar'}>
-                <li className='close-button-wrapper'>
-                    <h3>菜单</h3>
-                    <Icon name="menu-off" onClick={() => {
+            <ul className={isSidebarVisible ? 'open-sidebar' : undefined}>
+                <li className='close-button-wrapper' onClick={() => {
 
-                        setIsSidebarVisible(false)
-                    }}/>
+                    setIsSidebarVisible(false)
+                }}>
+
+                    <Icon name="menu-off"/>
                 </li>
                 <li>
                     <NavLink to="/upload" activeClassName="selected"> 上传</NavLink>

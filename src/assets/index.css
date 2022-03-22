@@ -2,16 +2,23 @@
 
 body {
     font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", sans-serif;
-
+    background-color: #2c2a38;
+    color:#d4d4d4;
 }
 
 
 .icon {
-    width: 1em;
-    height: 1em;
+    width: 14px;
+    height: 14px;
+
 }
 
-.icon.upload-video {
-    font-size: 64px;
-    fill: #666;
+.icon.upload-video-icon {
+    width: 64px;
+    height: 64px;
+
+}
+.icon.loading-icon {
+    width: 256px;
+    height: 256px;
 }

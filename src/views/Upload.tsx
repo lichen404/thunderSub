@@ -6,12 +6,18 @@ import {Context} from "../context";
 import Icon from "../components/Icon";
 import Layout from "../components/Layout";
 
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex:1;
 
+`
 const UploadWrapper = styled.div`
-  width: 256px;
+  min-width: 256px;
   height: 256px;
-  background: #fafafa;
-  border: 2px dashed #d9d9d9;
+  width: 60%;
+  border: 4px dashed #42424e;
 
   > label {
     width: 100%;
@@ -24,6 +30,9 @@ const UploadWrapper = styled.div`
     input {
       display: none;
     }
+    > span {
+      margin-top: 8px;
+    }
   }
 `
 const Shadow = styled.div`
@@ -34,7 +43,6 @@ const Shadow = styled.div`
   position: fixed;
   top: 30px;
   left: 0;
-  font-size: 256px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -74,21 +82,22 @@ const Upload: React.FC = () => {
     }
     return (
         <Layout>
-            {isLoading && <Shadow><Icon name="loading"/></Shadow>}
+            <Wrapper>
+            {isLoading && <Shadow><Icon name="loading" className="loading-icon"/></Shadow>}
             {isSidebarVisible && <SideBarShadow/>}
             <UploadWrapper>
                 <label onDrop={handleUpload} onDragOver={
                     (e) => {
                         e.preventDefault();
                     }
-                }><Icon name="upload-video" className="upload-video"/>
+                }><Icon name="upload-video" className="upload-video-icon"/>
                     <span>将视频文件拖拽至此，或点击选择</span>
                     <input type="file" onChange={
                         handleUpload
                     }/>
                 </label>
             </UploadWrapper>
-
+            </Wrapper>
 
         </Layout>
     )
