@@ -1,0 +1,13 @@
+import {FC} from "react";
+import { Outlet } from "react-router-dom";
+import Layout from "../components/Layout";
+
+const Index:FC = ()=>{
+    return (
+        <Layout>
+            <Outlet/>
+        </Layout>
+    )
+}
+
+export default  Index;

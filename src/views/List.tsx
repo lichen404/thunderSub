@@ -1,21 +1,19 @@
 import React, {FC, useContext} from "react";
-import {useHistory} from "react-router-dom";
 import {Context} from "../context";
 import SubTable from "../components/Table";
-import Layout from "../components/Layout";
 import {ipcRenderer} from "electron";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
-  flex:1;
+  flex: 1;
 `
 
 const List: FC = () => {
-    const history = useHistory()
+
     const {fileList} = useContext(Context)
     return (
-        <Layout>
-            <Wrapper>
+
+        <Wrapper>
             <SubTable columns={
                 [
                     {
@@ -47,8 +45,8 @@ const List: FC = () => {
                 ]
             } data={fileList}/>
 
-            </Wrapper>
-        </Layout>
+        </Wrapper>
+
     )
 }
 

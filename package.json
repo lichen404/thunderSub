@@ -20,7 +20,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "asarUnpack":[
+        "asarUnpack": [
           "node_modules/ffmpeg-static/ffmpeg.exe",
           "node_modules/ffmpeg-static/index.js",
           "node_modules/ffmpeg-static/package.json",
@@ -112,7 +112,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-hot-loader": "^4.13.0",
-    "react-router-dom": "5.2.0",
+    "react-router-dom": "^6.3.0",
     "styled-components": "^5.3.3"
   }
 }

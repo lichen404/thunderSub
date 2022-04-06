@@ -1,11 +1,12 @@
 import {hot} from 'react-hot-loader'
-import {HashRouter as Router, Switch, Route, Redirect} from "react-router-dom";
+import {HashRouter as Router, Route, Routes} from "react-router-dom";
 import Upload from './views/Upload';
 import List from "./views/List";
 import NoMatch from "./views/NoMatch";
 import Context from "./context";
 import React, {FC} from "react";
 import Nav from "./components/Nav";
+import Index from "./views";
 
 
 const App: FC = () => {
@@ -16,18 +17,17 @@ const App: FC = () => {
 
             <main>
                 <Router>
-                    <Switch>
-                        <Route path="/upload" exact>
-                            <Upload/>
+                    <Routes>
+                        <Route path="/" element={<Index/>}>
+                            <Route path="/:file/list" element={<List/>}/>
+                            <Route element={<Upload/>} index/>
+                            <Route path="/upload" element={<Upload/>}/>
                         </Route>
-                        <Route path="/:file/list" exact>
-                            <List/>
+
+                        <Route path="*" element={<NoMatch/>}>
+
                         </Route>
-                        <Redirect exact from="/" to='/upload'/>
-                        <Route path="*">
-                            <NoMatch/>
-                        </Route>
-                    </Switch>
+                    </Routes>
                 </Router>
             </main>
 

@@ -1,16 +1,16 @@
 import React, {useContext, useState} from 'react';
 import styled from "styled-components";
 import {ipcRenderer} from "electron";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {Context} from "../context";
 import Icon from "../components/Icon";
-import Layout from "../components/Layout";
+
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex:1;
+  flex: 1;
 
 `
 const UploadWrapper = styled.div`
@@ -30,6 +30,7 @@ const UploadWrapper = styled.div`
     input {
       display: none;
     }
+
     > span {
       margin-top: 8px;
     }
@@ -37,11 +38,11 @@ const UploadWrapper = styled.div`
 `
 const Shadow = styled.div`
   width: 100%;
-  height: calc(100vh - 30px);
+  height: calc(100vh - 25px);
   opacity: 0.4;
   background-color: rgba(0, 0, 0);
   position: fixed;
-  top: 30px;
+  bottom: 0;
   left: 0;
   display: flex;
   justify-content: center;
@@ -51,13 +52,13 @@ const Shadow = styled.div`
 
 const SideBarShadow = styled.div`
   width: 200px;
-  height: calc(100vh - 30px);
+  height: calc(100vh - 25px);
 `
 
 
 const Upload: React.FC = () => {
-    const history = useHistory()
-    const {setFileList,isSidebarVisible} = useContext(Context)
+    const navigate = useNavigate()
+    const {setFileList, isSidebarVisible} = useContext(Context)
     const [isLoading, setIsLoading] = useState(false)
     console.log(isSidebarVisible)
 
@@ -75,14 +76,14 @@ const Upload: React.FC = () => {
         if (data) {
 
             setFileList(data.sublist.filter(((sub: any) => sub.surl)))
-            history.push(`/${payload.videoName}/list`)
+            navigate(`/${payload.videoName}/list`)
         }
         setIsLoading(false)
         e.target.value = null
     }
     return (
-        <Layout>
-            <Wrapper>
+
+        <Wrapper>
             {isLoading && <Shadow><Icon name="loading" className="loading-icon"/></Shadow>}
             {isSidebarVisible && <SideBarShadow/>}
             <UploadWrapper>
@@ -97,9 +98,9 @@ const Upload: React.FC = () => {
                     }/>
                 </label>
             </UploadWrapper>
-            </Wrapper>
+        </Wrapper>
 
-        </Layout>
+
     )
 }
 export default Upload;

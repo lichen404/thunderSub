@@ -5,7 +5,6 @@ import Icon from "./Icon";
 import {Context} from "../context";
 
 const SideBarWrapper = styled.aside`
-
   > ul {
     background-color: #42424e;
     transition: all .3s;
@@ -14,6 +13,7 @@ const SideBarWrapper = styled.aside`
     width: 200px;
     min-height: 100vh;
     left: -200px;
+    z-index: 2;
 
     &.open-sidebar {
       left: 0;
@@ -27,7 +27,7 @@ const SideBarWrapper = styled.aside`
 
       &:hover {
 
-        background-color: #2c2a38;
+        background-color: #343442;
       }
 
       &.close-button-wrapper {
@@ -37,6 +37,7 @@ const SideBarWrapper = styled.aside`
         align-items: center;
         padding-right: 20px;
         cursor: pointer;
+
         &:hover {
           background-color: #42424e;
         }
@@ -72,6 +73,17 @@ const SideBarWrapper = styled.aside`
     }
   }
 
+  > .shadow {
+    position: absolute;
+    bottom: 0;
+    min-height: calc(100vh - 25px);
+    left: 0;
+    display: block;
+    min-width: 100%;
+    z-index: 1;
+    background-color: rgba(42, 42, 56, .8);
+  }
+
 
 
 
@@ -93,13 +105,16 @@ const SideBar: FC = () => {
                     <Icon name="menu-off"/>
                 </li>
                 <li>
-                    <NavLink to="/upload" activeClassName="selected"> 上传</NavLink>
+                    <NavLink to="/upload" className={({isActive}) => isActive ? "selected" : ""}> 上传</NavLink>
 
                 </li>
                 <li>
-                    <NavLink to="/history" activeClassName="selected"> 历史记录</NavLink>
+                    <NavLink to="/history" className={({isActive}) => isActive ? "selected" : ""}> 历史记录</NavLink>
                 </li>
             </ul>
+            {isSidebarVisible && <div className="shadow" onClick={() => {
+                setIsSidebarVisible(false)
+            }}/>}
 
 
         </SideBarWrapper>
