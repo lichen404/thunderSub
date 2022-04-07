@@ -76,10 +76,9 @@ const SideBarWrapper = styled.aside`
   > .shadow {
     position: absolute;
     bottom: 0;
-    min-height: calc(100vh - 25px);
+    right:0;
     left: 0;
-    display: block;
-    min-width: 100%;
+    top:25px;
     z-index: 1;
     background-color: rgba(42, 42, 56, .8);
   }

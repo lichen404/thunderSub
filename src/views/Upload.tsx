@@ -60,7 +60,7 @@ const Upload: React.FC = () => {
     const navigate = useNavigate()
     const {setFileList, isSidebarVisible} = useContext(Context)
     const [isLoading, setIsLoading] = useState(false)
-    console.log(isSidebarVisible)
+
 
     const handleUpload = async (e: any) => {
 
