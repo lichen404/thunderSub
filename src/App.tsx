@@ -6,7 +6,8 @@ import NoMatch from "./views/NoMatch";
 import Context from "./context";
 import React, {FC} from "react";
 import Nav from "./components/Nav";
-import Index from "./views";
+import Index from "./views/Index";
+import History from "./views/History";
 
 
 const App: FC = () => {
@@ -22,10 +23,9 @@ const App: FC = () => {
                             <Route path="/:file/list" element={<List/>}/>
                             <Route element={<Upload/>} index/>
                             <Route path="/upload" element={<Upload/>}/>
+                            <Route path="/history" element={<History/>}/>
+                            <Route path="*" element={<NoMatch/>}>
                         </Route>
-
-                        <Route path="*" element={<NoMatch/>}>
-
                         </Route>
                     </Routes>
                 </Router>

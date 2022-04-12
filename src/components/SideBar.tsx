@@ -104,11 +104,15 @@ const SideBar: FC = () => {
                     <Icon name="menu-off"/>
                 </li>
                 <li>
-                    <NavLink to="/upload" className={({isActive}) => isActive ? "selected" : ""}> 上传</NavLink>
+                    <NavLink to="/upload" className={({isActive}) => isActive ? "selected" : ""} onClick={()=>{
+                        setIsSidebarVisible(false)
+                    }}> 上传</NavLink>
 
                 </li>
                 <li>
-                    <NavLink to="/history" className={({isActive}) => isActive ? "selected" : ""}> 历史记录</NavLink>
+                    <NavLink to="/history" className={({isActive}) => isActive ? "selected" : ""} onClick={()=>{
+                        setIsSidebarVisible(false)
+                    }}> 历史记录</NavLink>
                 </li>
             </ul>
             {isSidebarVisible && <div className="shadow" onClick={() => {
