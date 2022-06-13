@@ -3,9 +3,20 @@ import {Context} from "../context";
 import SubTable from "../components/Table";
 import {ipcRenderer} from "electron";
 import styled from "styled-components";
+import Icon from "../components/Icon";
 
 const Wrapper = styled.div`
-  flex: 1;
+  overflow: auto hidden;
+
+  button {
+    cursor: pointer;
+    background-color: #2c2a38;
+    > svg {
+      width: 24px;
+      height:24px;
+    }
+  }
+
 `
 
 const List: FC = () => {
@@ -19,27 +30,34 @@ const List: FC = () => {
                     {
                         dataIndex: "sname",
                         name: "名称",
-                        width: 200
+
                     },
                     {
                         dataIndex: "language",
-                        name: "语言"
+                        name: "语言",
+                        width: 180
                     },
                     {
                         dataIndex: "simility",
-                        name: "匹配度"
+                        name: "匹配度",
+                        render(value) {
+                            return `${value * 100}%`
+                        },
+                        width: 160
                     },
                     {
                         dataIndex: "sext",
-                        name: "类型"
+                        name: "类型",
+                        width: 100
                     },
                     {
                         dataIndex: 'surl',
+                        width: 80,
                         render(url, file) {
                             return <button onClick={() => {
                                 ipcRenderer.send('download-sub', {url, name: `${file.sname}.${file.sext}`})
                             }
-                            }>下载</button>
+                            }><Icon name="download"/></button>
                         }
                     }
                 ]

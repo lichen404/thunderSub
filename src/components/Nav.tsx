@@ -55,7 +55,7 @@ const Nav: FC = () => {
                 ipcRenderer.send('fixed-window', !isFixedWindow)
                 setIsFixedWindow(!isFixedWindow)
             }
-            } style={isFixedWindow ? {background: '#e2e2e2'} : {}}>
+            } style={isFixedWindow ? {background: 'hsla(0,0%,98%,.2)'} : {}}>
                 <Icon name="fixed"/>
             </li>
             <li onClick={() => {

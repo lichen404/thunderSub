@@ -39,8 +39,7 @@ const UploadWrapper = styled.div`
 const Shadow = styled.div`
   width: 100%;
   height: calc(100vh - 25px);
-  opacity: 0.4;
-  background-color: rgba(0, 0, 0);
+  background-color: #2c2a38;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -48,6 +47,7 @@ const Shadow = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  z-index: 2;
 `
 
 const SideBarShadow = styled.div`
@@ -74,12 +74,12 @@ const Upload: React.FC = () => {
             console.log(e)
         })
         if (data) {
-
+            setIsLoading(false)
+            e.target.value = null
             setFileList(data.sublist.filter(((sub: any) => sub.surl)))
             navigate(`/${payload.videoName}/list`)
         }
-        setIsLoading(false)
-        e.target.value = null
+
     }
     return (
 

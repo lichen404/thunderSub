@@ -6,6 +6,9 @@ import path from "path";
 import fs from "fs";
 import qs from "qs";
 
+const subPath = `${os.homedir()}/Documents/ThunderSub`
+
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit();
@@ -101,7 +104,9 @@ ipcMain.handle('upload-file', async (event, payload) => {
 
 
 })
-const subPath = `${os.homedir()}/Documents/ThunderSub`
+
+
+
 ipcMain.on('download-sub', async (event, {name, url}: { name: string, url: string }) => {
     if (!fs.existsSync(subPath)) {
         fs.mkdirSync(subPath);
