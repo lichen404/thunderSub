@@ -107,7 +107,7 @@
     "electron-store": "^8.0.1",
     "ffmpeg-static": "^5.0.0",
     "ffprobe-static": "^3.0.0",
-    "fluent-ffmpeg": "^2.1.2",
+    "fluent-ffmpeg": "https://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
     "qs": "^6.10.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
