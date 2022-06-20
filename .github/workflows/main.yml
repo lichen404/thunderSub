@@ -8,6 +8,8 @@ on:
 
 jobs:
     release:
+        env:
+          FLUENTFFMPEG_COV: false
         name: build and release electron app
         runs-on: ${{ matrix.os }}
         
