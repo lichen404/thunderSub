@@ -8,8 +8,6 @@ on:
 
 jobs:
     release:
-        env:
-          FLUENTFFMPEG_COV: false
         name: build and release electron app
         runs-on: ${{ matrix.os }}
         
@@ -29,7 +27,10 @@ jobs:
 
           - name: Install Dependencies
             run: yarn install
-
+        
+          - name: Fix fluent-ffmpeg bug#573
+            run: cp node_modules/fluent-ffmpeg/lib node_modules/fluent-ffmpeg/lib-cov -r
+            
           - name: Build Electron App
             run: yarn package
             env:
