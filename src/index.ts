@@ -1,5 +1,5 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
-import ffmpeg,{ffprobe} from 'fluent-ffmpeg'
+import ffmpeg, {ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
 import os from 'os';
 import path from "path";
@@ -30,11 +30,11 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: never;
-
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 const instance = axios.create({
     baseURL: 'http://subtitle.kankan.xunlei.com:8000/search.json/',
-    timeout:1000 * 60 * 3
+    timeout: 1000 * 60 * 3
 })
 
 let mainWindow: BrowserWindow
@@ -47,7 +47,8 @@ const createWindow = (): void => {
         width: 800,
         frame: false,
         webPreferences: {
-            nodeIntegration: true
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+            contextIsolation: true
         }
     });
 
@@ -92,8 +93,8 @@ ipcMain.handle('upload-file', async (event, payload) => {
     try {
         const {data} = await instance.get(
             qs.stringify({
-                mname:payload.videoName,
-                videolength:(parseFloat(videoLength as string) * 1000).toString()
+                mname: payload.videoName,
+                videolength: (parseFloat(videoLength as string) * 1000).toString()
             })
         )
         return data
@@ -104,7 +105,6 @@ ipcMain.handle('upload-file', async (event, payload) => {
 
 
 })
-
 
 
 ipcMain.on('download-sub', async (event, {name, url}: { name: string, url: string }) => {

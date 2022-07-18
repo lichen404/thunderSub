@@ -1,6 +1,5 @@
 import {FC, useContext, useState} from "react";
 import styled from "styled-components";
-import {ipcRenderer} from "electron";
 import Icon from "./Icon";
 import {Context} from "../context";
 
@@ -8,7 +7,7 @@ import {Context} from "../context";
 const NavWrapper = styled.nav`
   max-height: 30px;
   -webkit-app-region: drag;
-  background-color:#343442;
+  background-color: #343442;
 
   > ul {
     width: 100%;
@@ -29,8 +28,8 @@ const NavWrapper = styled.nav`
       }
 
       &:hover {
-       background-color: hsla(0,0%,98%,.2);
-        
+        background-color: hsla(0, 0%, 98%, .2);
+
       }
     }
 
@@ -52,34 +51,34 @@ const Nav: FC = () => {
                 <Icon name="menu-on"/>
             </li>
             <li onClick={() => {
-                ipcRenderer.send('fixed-window', !isFixedWindow)
+                window.electron.ipcRenderer.send('fixed-window', !isFixedWindow)
                 setIsFixedWindow(!isFixedWindow)
             }
             } style={isFixedWindow ? {background: 'hsla(0,0%,98%,.2)'} : {}}>
                 <Icon name="fixed"/>
             </li>
             <li onClick={() => {
-                ipcRenderer.send('minimize-window')
+                window.electron.ipcRenderer.send('minimize-window')
             }
             }>
                 <Icon name="minus"/>
             </li>
             {isMaxWindow ? <li onClick={() => {
-                    ipcRenderer.send('resize-window')
+                    window.electron.ipcRenderer.send('resize-window')
                     setIsMaxWindow(false)
                 }}
                 >
                     <Icon name="restore"/>
                 </li> :
                 <li onClick={() => {
-                    ipcRenderer.send('maximize-window')
+                    window.electron.ipcRenderer.send('maximize-window')
                     setIsMaxWindow(true)
                 }
                 }>
                     <Icon name="max"/>
                 </li>}
             <li onClick={() => {
-                ipcRenderer.send('close-window')
+                window.electron.ipcRenderer.send('close-window')
             }
             }>
                 <Icon name="close"/>

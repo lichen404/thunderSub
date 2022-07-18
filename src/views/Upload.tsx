@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import styled from "styled-components";
-import {ipcRenderer} from "electron";
+
 import {useNavigate} from "react-router-dom";
 import {Context} from "../context";
 import Icon from "../components/Icon";
@@ -70,7 +70,7 @@ const Upload: React.FC = () => {
         }
         setIsLoading(true)
 
-        const data = await ipcRenderer.invoke('upload-file', payload).catch(e => {
+        const data = await window.electron.ipcRenderer.invoke('upload-file', payload).catch(e => {
             console.log(e)
         })
         if (data) {

@@ -1,7 +1,7 @@
 import React, {FC, useContext} from "react";
 import {Context} from "../context";
 import SubTable from "../components/Table";
-import {ipcRenderer} from "electron";
+
 import styled from "styled-components";
 import Icon from "../components/Icon";
 
@@ -11,9 +11,10 @@ const Wrapper = styled.div`
   button {
     cursor: pointer;
     background-color: #2c2a38;
+
     > svg {
       width: 24px;
-      height:24px;
+      height: 24px;
     }
   }
 
@@ -55,7 +56,10 @@ const List: FC = () => {
                         width: 80,
                         render(url, file) {
                             return <button onClick={() => {
-                                ipcRenderer.send('download-sub', {url, name: `${file.sname}.${file.sext}`})
+                                window.electron.ipcRenderer.send('download-sub', {
+                                    url,
+                                    name: `${file.sname}.${file.sext}`
+                                })
                             }
                             }><Icon name="download"/></button>
                         }
