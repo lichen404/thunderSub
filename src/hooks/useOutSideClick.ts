@@ -1,6 +1,8 @@
-import {useEffect, useRef} from "react";
+import {MutableRefObject, useEffect, useRef} from "react";
 
-export const useOutSideClick = (callback: (event: MouseEvent) => void):void => {
+type fn<T> = (callback:(event:MouseEvent)=>void)=>MutableRefObject<T>
+
+export const useOutSideClick:fn<any> = (callback) => {
     const ref = useRef<any>()
     useEffect(() => {
         const handleClick = (event: MouseEvent) => {
@@ -13,6 +15,7 @@ export const useOutSideClick = (callback: (event: MouseEvent) => void):void => {
             document.removeEventListener('click', handleClick)
         }
     })
+    return ref;
 
 
 }

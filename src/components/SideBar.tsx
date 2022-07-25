@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {NavLink} from "react-router-dom";
 import Icon from "./Icon";
 import {Context} from "../context";
+import {useOutSideClick} from "../hooks/useOutSideClick";
 
 const SideBarWrapper = styled.aside`
   > ul {
@@ -91,10 +92,13 @@ const SideBarWrapper = styled.aside`
 `
 const SideBar: FC = () => {
     const {isSidebarVisible, setIsSidebarVisible} = useContext(Context)
+    const ref = useOutSideClick(()=>{
+        isSidebarVisible && setIsSidebarVisible(false)
+    })
     return (
 
 
-        <SideBarWrapper>
+        <SideBarWrapper ref={ref}>
             <ul className={isSidebarVisible ? 'open-sidebar' : undefined}>
                 <li className='close-button-wrapper' onClick={() => {
 
@@ -115,9 +119,7 @@ const SideBar: FC = () => {
                     }}> 历史记录</NavLink>
                 </li>
             </ul>
-            {isSidebarVisible && <div className="shadow" onClick={() => {
-                setIsSidebarVisible(false)
-            }}/>}
+
 
 
         </SideBarWrapper>
