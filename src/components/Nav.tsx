@@ -1,4 +1,4 @@
-import {FC, useContext, useState} from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 import {Context} from "../context";
@@ -41,6 +41,12 @@ const Nav: FC = () => {
     const [isMaxWindow, setIsMaxWindow] = useState(false)
     const [isFixedWindow, setIsFixedWindow] = useState(false)
     const {setIsSidebarVisible} = useContext(Context)
+
+    useEffect(()=>{
+         window.electron.onResponse('isMaxWindow',(_:any,isMaxWindow:boolean)=>{
+             setIsMaxWindow(isMaxWindow)
+         })
+    },[])
     return <NavWrapper>
         <ul>
             <li onClick={() => {

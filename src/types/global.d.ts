@@ -6,7 +6,8 @@ export {};
 declare global {
     interface Window {
         electron: {
-            ipcRenderer:IpcRenderer
+            ipcRenderer:IpcRenderer,
+            onResponse:(channel:any, listener:any)=>void;
         };
     }
 }

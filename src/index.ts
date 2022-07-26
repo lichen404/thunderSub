@@ -1,4 +1,4 @@
-import {app, BrowserWindow, ipcMain} from 'electron';
+import {app, BrowserWindow, ipcMain, shell} from 'electron';
 import ffmpeg, {ffprobe} from 'fluent-ffmpeg'
 import axios from "axios";
 import os from 'os';
@@ -57,7 +57,13 @@ const createWindow = (): void => {
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
-};
+
+    mainWindow.on('unmaximize', () => {
+
+        mainWindow.webContents.send('isMaxWindow', false)
+    })
+
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -107,7 +113,7 @@ ipcMain.handle('upload-file', async (event, payload) => {
 })
 
 
-ipcMain.on('download-sub', async (event, {name, url}: { name: string, url: string }) => {
+ipcMain.handle('download-sub', async (event, {name, url}: { name: string, url: string }) => {
     if (!fs.existsSync(subPath)) {
         fs.mkdirSync(subPath);
     }
@@ -118,7 +124,24 @@ ipcMain.on('download-sub', async (event, {name, url}: { name: string, url: strin
             responseType: 'stream'
         })
         response.data.pipe(writer);
+        return new Promise((resolve, reject) => {
+
+            writer.on('finish', () => resolve(myPath))
+            writer.on('error', () => reject())
+
+        })
+
     }
+})
+
+ipcMain.handle('open-explore', (event, filePath) => {
+    if(fs.existsSync(filePath)){
+        shell.showItemInFolder(filePath)
+        return true
+
+    }
+    return false
+
 })
 
 ipcMain.on('close-window', () => {

@@ -66,7 +66,6 @@
                   "preload": {
                     "js": "./src/preload.ts"
                   }
-
                 }
               ]
             }
@@ -108,7 +107,6 @@
     "axios": "^0.25.0",
     "classnames": "^2.3.1",
     "electron-squirrel-startup": "^1.0.0",
-    "electron-store": "^8.0.1",
     "ffmpeg-static": "^5.0.0",
     "ffprobe-static": "^3.0.0",
     "fluent-ffmpeg": "https://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",

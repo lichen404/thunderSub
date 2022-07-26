@@ -3,7 +3,8 @@ import {Context} from "../context";
 import SubTable from "../components/Table";
 
 import styled from "styled-components";
-import Icon from "../components/Icon";
+
+import ListButton from "../components/ListButton";
 
 const Wrapper = styled.div`
   overflow: auto hidden;
@@ -55,13 +56,7 @@ const List: FC = () => {
                         dataIndex: 'surl',
                         width: 80,
                         render(url, file) {
-                            return <button onClick={() => {
-                                window.electron.ipcRenderer.send('download-sub', {
-                                    url,
-                                    name: `${file.sname}.${file.sext}`
-                                })
-                            }
-                            }><Icon name="download"/></button>
+                            return <ListButton url={url} file={file}/>
                         }
                     }
                 ]
