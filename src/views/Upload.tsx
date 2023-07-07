@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {useNavigate} from "react-router-dom";
 import {Context} from "../context";
 import Icon from "../components/Icon";
+import {handleOpenDB} from "../store";
 
 
 const Wrapper = styled.div`

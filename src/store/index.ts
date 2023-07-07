@@ -16,14 +16,7 @@ export const handleOpenDB = (databaseName:string, storeName:string, version = 1)
             db = request.result
 
             if (!db.objectStoreNames.contains(storeName)) {
-                const objectStore = db.createObjectStore(storeName, { keyPath: "id" });
-                objectStore.createIndex("workerId", "workerId", { unique: false });
-                objectStore.createIndex("building", "building", { unique: false });
-                objectStore.createIndex("equipment", "equipment", { unique: false });
-                objectStore.createIndex("jobType", "jobType", { unique: false });
-                objectStore.createIndex("detail", "detail", { unique: false });
-                objectStore.createIndex("startDate", "startDate", { unique: false });
-                objectStore.createIndex("endDate", "endDate", { unique: false });
+             db.createObjectStore(storeName, {keyPath:"name"})
             }
         };
     });

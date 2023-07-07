@@ -1,6 +1,5 @@
 import React, {FC, useState} from "react";
 import Icon from "./Icon";
-import {handleOpenDB} from "../store";
 
 interface ButtonProps {
     url: string,
@@ -8,9 +7,9 @@ interface ButtonProps {
     icon?:'download' | 'loading' | 'view'
 }
 
-const ListButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
+const ActionButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
     const [iconName, setIconName] = useState(icon)
-    const [viewPath, setViewPath] = useState("")
+    const [viewPath, setViewPath] = useState(file.path)
     return <button onClick={async () => {
 
         if (iconName === 'download') {
@@ -19,17 +18,6 @@ const ListButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
                 url,
                 name: `${file.sname}.${file.sext}`
             })
-            const db = await  handleOpenDB('history','movieStore')
-            const transaction = db.transaction('movieStore', 'readwrite');
-            const movieStore = transaction.objectStore('movieStore');
-            movieStore.add(
-                {
-                    name:`${file.sname}.${file.sext}`,
-                    path,
-                    ...file
-                }
-            )
-
             setViewPath(path)
             setIconName('view')
 
@@ -44,4 +32,4 @@ const ListButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
     }><Icon name={iconName}/></button>
 }
 
-export default ListButton;
+export default ActionButton;
