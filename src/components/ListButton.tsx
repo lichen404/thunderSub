@@ -1,14 +1,14 @@
 import React, {FC, useState} from "react";
 import Icon from "./Icon";
-import {handleOpenDB} from "../store";
+import {addData, handleOpenDB, updateData} from "../store";
 
 interface ButtonProps {
     url: string,
     file: any;
-    icon?:'download' | 'loading' | 'view'
+    icon?: 'download' | 'loading' | 'view'
 }
 
-const ListButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
+const ListButton: FC<ButtonProps> = ({url, file, icon = 'download'}) => {
     const [iconName, setIconName] = useState(icon)
     const [viewPath, setViewPath] = useState("")
     return <button onClick={async () => {
@@ -19,16 +19,19 @@ const ListButton: FC<ButtonProps> = ({url, file,icon = 'download'}) => {
                 url,
                 name: `${file.sname}.${file.sext}`
             })
-            const db = await  handleOpenDB('history','movieStore')
-            const transaction = db.transaction('movieStore', 'readwrite');
-            const movieStore = transaction.objectStore('movieStore');
-            movieStore.add(
-                {
-                    name:`${file.sname}.${file.sext}`,
+            const db = await handleOpenDB('history', 'movieStore')
+
+            await addData(db, 'movieStore', {
+                name: `${file.sname}.${file.sext}`,
+                path,
+                ...file
+            }).catch(() => {
+                updateData(db, 'movieStore', {
+                    name: `${file.sname}.${file.sext}`,
                     path,
                     ...file
-                }
-            )
+                })
+            })
 
             setViewPath(path)
             setIconName('view')

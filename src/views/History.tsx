@@ -1,7 +1,6 @@
 import {FC, useEffect, useState} from "react";
 import SubTable from "../components/Table";
-import {handleOpenDB} from "../store";
-import Icon from "../components/Icon";
+import {handleOpenDB, readLatestData} from "../store";
 import ActionButton from "../components/ActionButton";
 import styled from "styled-components";
 
@@ -25,18 +24,9 @@ const History: FC = () => {
 
     useEffect(() => {
             handleOpenDB('history', 'movieStore').then((db) => {
-                const transaction = db.transaction('movieStore', 'readonly');
-                const objectStore = transaction.objectStore('movieStore');
-                objectStore.openCursor().onsuccess = (event: any) => {
-                    const cursor = event.target.result;
-                    if (cursor && historyData.length < 10) {
-                        historyData.push(cursor.value);
-                        cursor.continue();
-                    }
-                    setHistoryData([...historyData])
-
-                };
-
+                readLatestData(db, 'movieStore').then((list) => {
+                    setHistoryData(list)
+                })
             })
         }
         , [])
