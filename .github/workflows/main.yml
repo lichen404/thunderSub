@@ -35,13 +35,11 @@ jobs:
             run: yarn package
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
           - name: upload artifacts
-            uses: actions/upload-artifact@v3.0.0
+            uses: actions/upload-artifact@v3.1.2
             with:
               name: ${{ matrix.os }}
-              path: ${{github.workspace}}/dist/
+              path: dist/
 
           - name: release
             uses: softprops/action-gh-release@v0.1.14
