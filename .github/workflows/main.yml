@@ -39,12 +39,12 @@ jobs:
             uses: actions/upload-artifact@v3.1.2
             with:
               name: ${{ matrix.os }}
-              path: dist/
+              path: out/
 
           - name: release
             uses: softprops/action-gh-release@v0.1.14
             if: startsWith(github.ref, 'refs/tags/')
             with:
-              files: "dist/**"
+              files: "out/**"
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
