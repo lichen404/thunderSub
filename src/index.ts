@@ -5,6 +5,7 @@ import os from 'os';
 import path from "path";
 import fs from "fs";
 import qs from "qs";
+import updateElectronApp from 'update-electron-app'
 
 const subPath = `${os.homedir()}/Documents/ThunderSub`
 
@@ -14,6 +15,10 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
     app.quit();
 }
 
+updateElectronApp({
+    repo: 'lichen404/thunderSub',
+    updateInterval: '1 hour',
+})
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const ffmpegPath = require('ffmpeg-static').replace(
