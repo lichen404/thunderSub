@@ -12,16 +12,16 @@ jobs:
     release:
         name: build and release electron app
         runs-on: ${{ matrix.os }}
-        
+
         strategy:
           fail-fast: false
           matrix:
             os: [windows-latest]
-            
+
         steps:
           - name: Check out git repository
             uses: actions/checkout@v3.0.0
-        
+
           - name: Install Node.js
             uses: actions/setup-node@v3.0.0
             with:
@@ -29,10 +29,10 @@ jobs:
 
           - name: Install Dependencies
             run: yarn install
-        
+
           - name: Fix fluent-ffmpeg bug#573
             run: cp node_modules/fluent-ffmpeg/lib node_modules/fluent-ffmpeg/lib-cov -r
-            
+
           - name: Build Electron App
             run: yarn package
             env:
@@ -42,11 +42,15 @@ jobs:
             with:
               name: ${{ matrix.os }}
               path: out
-
+          - name: Download artifacts
+            uses: actions/download-artifact@v2
+            with:
+              name: ${{ matrix.os }}
           - name: release
             uses: softprops/action-gh-release@v1
             if: startsWith(github.ref, 'refs/tags/')
             with:
-              files: "out/**"
+              files: |
+                out/**
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

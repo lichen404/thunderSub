@@ -8,7 +8,7 @@ interface ButtonProps {
     icon?: 'download' | 'loading' | 'view'
 }
 
-const ListButton: FC<ButtonProps> = ({url, file, icon = 'download'}) => {
+const ViewButton: FC<ButtonProps> = ({url, file, icon = 'download'}) => {
     const [iconName, setIconName] = useState(icon)
     const [viewPath, setViewPath] = useState("")
     return <button onClick={async () => {
@@ -47,4 +47,4 @@ const ListButton: FC<ButtonProps> = ({url, file, icon = 'download'}) => {
     }><Icon name={iconName}/></button>
 }
 
-export default ListButton;
+export default ViewButton;

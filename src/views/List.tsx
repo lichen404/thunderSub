@@ -4,7 +4,7 @@ import SubTable from "../components/Table";
 
 import styled from "styled-components";
 
-import ListButton from "../components/ListButton";
+import ViewButton from "../components/ViewButton";
 
 const Wrapper = styled.div`
   overflow: auto hidden;
@@ -56,7 +56,7 @@ const List: FC = () => {
                         dataIndex: 'surl',
                         width: 80,
                         render(url, file) {
-                            return <ListButton url={url} file={file}/>
+                            return <ViewButton url={url} file={file}/>
                         }
                     }
                 ]

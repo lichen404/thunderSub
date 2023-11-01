@@ -41,6 +41,7 @@ const History: FC = () => {
                 {
                     dataIndex: "path",
                     width: 80,
+                    name:"操作",
                     render(path, file) {
                         return <ActionButton url={file.surl} file={file} icon="view"/>
                     }
