@@ -50,6 +50,6 @@ jobs:
             uses: softprops/action-gh-release@v1
             if: startsWith(github.ref, 'refs/tags/')
             with:
-              files: windows-latest.zip
+              files: D:/a/thunderSub/thunderSub/windows-latest.zip
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
