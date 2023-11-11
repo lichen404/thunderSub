@@ -42,10 +42,10 @@ jobs:
             with:
               name: ${{ matrix.os }}
               path: out
-          - name: Download artifacts
-            uses: actions/download-artifact@v2
+          - name: zip release
+            uses: montudor/action-zip@v1
             with:
-              name: ${{ matrix.os }}
+              - args: zip -qq -r windows-latest.zip out/thundersub-win32-x64
           - name: release
             uses: softprops/action-gh-release@v1
             if: startsWith(github.ref, 'refs/tags/')
