@@ -8,7 +8,7 @@ import React, {FC} from "react";
 import Nav from "./components/Nav";
 import Index from "./views/Index";
 import History from "./views/History";
-import {handleOpenDB} from "./store";
+
 
 
 const App: FC = () => {
