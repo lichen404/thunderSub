@@ -9,6 +9,8 @@ export interface SubtitleItem {
   format: SubtitleFormat;
   downloadUrl: string;
   score?: number;
+  name?: string;
+  star?: string;
 }
 
 export interface ParseResult {

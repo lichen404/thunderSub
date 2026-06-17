@@ -166,18 +166,142 @@ export class ThunderParser implements SubtitleParserAdapter {
     }
 
     const rawList = response.data ?? [];
-    const subtitles: SubtitleItem[] = rawList.map((item, index) => {
-      const subExt = (item.ext || 'srt').toLowerCase();
-      const format: SubtitleFormat = (['srt', 'ass', 'vtt'].includes(subExt) ? subExt : 'srt') as SubtitleFormat;
+    const subtitles: SubtitleItem[] = rawList
+      .filter((item) => {
+        const subExt = (item.ext || '').toLowerCase();
+        return ['srt', 'ass', 'vtt'].includes(subExt);
+      })
+      .map((item, index) => {
+        const subExt = (item.ext || '').toLowerCase();
+        const format = subExt as SubtitleFormat;
 
-      return {
-        id: `${item.cid || cid}-${index}`,
-        language: item.languages && item.languages.length > 0 ? item.languages.join(', ') : '中文/Other',
-        format,
-        downloadUrl: item.url,
-        score: item.score
-      };
-    });
+        // Clean up and map languages
+        let langs: string[] = [];
+        if (item.languages && item.languages.length > 0) {
+          langs = item.languages
+            .map((lang) => {
+              const trimmed = lang.trim();
+              const isNotLanguage = (str: string): boolean => {
+                const s = str.toLowerCase();
+                return (
+                  s.includes('h264') ||
+                  s.includes('x264') ||
+                  s.includes('h265') ||
+                  s.includes('x265') ||
+                  /^\d+p$/.test(s) ||
+                  s.includes('web-dl') ||
+                  s.includes('webrip') ||
+                  s.includes('bluray') ||
+                  s.includes('1080p') ||
+                  s.includes('720p') ||
+                  s.includes('nf') ||
+                  s.includes('ng')
+                );
+              };
+
+              if (!trimmed || trimmed === '未知语言' || isNotLanguage(trimmed)) {
+                // Try to detect language from subtitle filename
+                const subNameLower = (item.name || '').toLowerCase();
+                if (
+                  subNameLower.includes('cn&en') ||
+                  subNameLower.includes('zh&en') ||
+                  subNameLower.includes('双语') ||
+                  subNameLower.includes('双字')
+                ) {
+                  return '中英双语';
+                }
+                if (
+                  subNameLower.includes('zh-hans') ||
+                  subNameLower.includes('gb') ||
+                  subNameLower.includes('chs') ||
+                  subNameLower.includes('简体') ||
+                  subNameLower.includes('.sc.') ||
+                  subNameLower.includes('.zh.')
+                ) {
+                  return '简体中文';
+                }
+                if (
+                  subNameLower.includes('zh-hant') ||
+                  subNameLower.includes('big5') ||
+                  subNameLower.includes('cht') ||
+                  subNameLower.includes('繁体') ||
+                  subNameLower.includes('.tc.')
+                ) {
+                  return '繁体中文';
+                }
+                if (
+                  subNameLower.includes('eng') ||
+                  subNameLower.includes('english') ||
+                  subNameLower.includes('.en.')
+                ) {
+                  return 'English';
+                }
+                return '';
+              }
+
+              // Map "简体"/"繁体"
+              if (trimmed === '简体') return '简体中文';
+              if (trimmed === '繁体') return '繁体中文';
+
+              // Strip 3-letter lowercase prefix if followed by an uppercase letter (e.g. turTurkish -> Turkish)
+              const cleaned = trimmed.replace(/^[a-z]{3}([A-Z])/, '$1');
+              if (cleaned === 'Brazilian Portugu') {
+                return 'Brazilian Portuguese';
+              }
+              return cleaned;
+            })
+            .filter((l) => l !== '');
+        }
+
+        // Additional filename-based backup check if langs is empty
+        if (langs.length === 0) {
+          const subNameLower = (item.name || '').toLowerCase();
+          if (
+            subNameLower.includes('cn&en') ||
+            subNameLower.includes('zh&en') ||
+            subNameLower.includes('双语') ||
+            subNameLower.includes('双字')
+          ) {
+            langs.push('中英双语');
+          } else if (
+            subNameLower.includes('zh-hans') ||
+            subNameLower.includes('gb') ||
+            subNameLower.includes('chs') ||
+            subNameLower.includes('简体') ||
+            subNameLower.includes('.sc.') ||
+            subNameLower.includes('.zh.')
+          ) {
+            langs.push('简体中文');
+          } else if (
+            subNameLower.includes('zh-hant') ||
+            subNameLower.includes('big5') ||
+            subNameLower.includes('cht') ||
+            subNameLower.includes('繁体') ||
+            subNameLower.includes('.tc.')
+          ) {
+            langs.push('繁体中文');
+          } else if (
+            subNameLower.includes('eng') ||
+            subNameLower.includes('english') ||
+            subNameLower.includes('.en.')
+          ) {
+            langs.push('English');
+          }
+        }
+
+        // Final fallback if all languages are empty or undefined
+        const languageLabel = langs.length > 0 ? Array.from(new Set(langs)).join(', ') : '其它 / Unknown';
+
+        return {
+          id: `${item.cid || cid}-${index}`,
+          language: languageLabel,
+          format,
+          downloadUrl: item.url,
+          score: item.score,
+          name: item.name,
+          star: item.star && item.star !== '0' ? item.star : undefined
+        };
+      });
 
     return { videoPath, subtitles };
   }

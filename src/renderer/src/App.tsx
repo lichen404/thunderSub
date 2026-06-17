@@ -207,9 +207,39 @@ export default function App() {
                     {subtitles.length === 0 && <div className="muted">{text('noSubtitles')}</div>}
                     {subtitles.map((item) => (
                       <div className="list-item" key={item.id}>
-                        <div>
-                          <strong>{item.language}</strong>
-                          <span>{item.format.toUpperCase()}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '85%', padding: '2px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <strong style={{ fontSize: '14px', color: '#eef4ff' }}>{item.language}</strong>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '2px 6px',
+                              background: 'rgba(0, 162, 255, 0.1)',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              color: '#00a2ff',
+                              fontWeight: '600',
+                              border: '1px solid rgba(0, 162, 255, 0.25)',
+                              lineHeight: 1.2
+                            }}>
+                              {item.format.toUpperCase()}
+                            </span>
+                            {item.star && (
+                              <span style={{ fontSize: '11px', color: '#ffbe0b', display: 'inline-flex', alignItems: 'center', gap: '2px', fontWeight: '500' }}>
+                                ★ {item.star}
+                              </span>
+                            )}
+                          </div>
+                          {item.name && (
+                            <span style={{
+                              fontSize: '12px',
+                              color: '#626f7a',
+                              wordBreak: 'break-all',
+                              display: 'block',
+                              lineHeight: 1.4
+                            }}>
+                              {item.name}
+                            </span>
+                          )}
                         </div>
                         <button onClick={() => downloadSubtitle(item)}>{text('download')}</button>
                       </div>
