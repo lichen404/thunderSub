@@ -56,9 +56,24 @@ body {
 .brand-name {
   font-size: 11px;
   color: #8c9ba5;
-  margin-top: 8px;
+  margin-top: 10px;
   font-weight: 500;
   text-align: center;
+}
+
+.brand-sub-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #00a2ff;
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid #070809;
+  line-height: 1;
 }
 
 .sidebar-nav {

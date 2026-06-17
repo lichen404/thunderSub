@@ -89,12 +89,15 @@ export default function App() {
     <div className="app-container">
       <aside className="app-sidebar">
         <div className="sidebar-brand">
-          <div className="brand-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
+          <div className="brand-wrapper" style={{ position: 'relative' }}>
+            <div className="brand-logo">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </div>
+            <span className="brand-sub-badge">sub</span>
           </div>
-          <span className="brand-name">sub</span>
+          <span className="brand-name">ThunderSub</span>
         </div>
 
         <nav className="sidebar-nav">
