@@ -91,10 +91,10 @@ export default function App() {
         <div className="sidebar-brand">
           <div className="brand-logo">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
-          <span className="brand-name">ThunderSub</span>
+          <span className="brand-name">sub</span>
         </div>
 
         <nav className="sidebar-nav">

@@ -44,13 +44,13 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #f39c12, #f1c40f);
-  color: #121317;
+  background: #ffffff;
+  color: #00a2ff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 162, 255, 0.25);
 }
 
 .brand-name {
@@ -108,17 +108,17 @@ body {
 
 /* Active Nav Button matching screenshot */
 .nav-button.active .icon-wrapper {
-  background: rgba(241, 196, 15, 0.12);
-  color: #f1c40f;
+  background: rgba(0, 162, 255, 0.12);
+  color: #00a2ff;
 }
 
 .nav-button.active .nav-label {
-  color: #f1c40f;
+  color: #00a2ff;
   font-weight: 600;
 }
 
 .nav-button:hover .icon-wrapper {
-  color: #ffd839;
+  color: #55c4ff;
 }
 
 .sidebar-footer {
@@ -202,7 +202,7 @@ select {
 
 input:focus,
 select:focus {
-  border-color: #f1c40f;
+  border-color: #00a2ff;
 }
 
 button {
@@ -228,15 +228,15 @@ button:disabled {
 }
 
 .primary-btn {
-  border-color: #f1c40f;
-  background: #f1c40f;
-  color: #000000;
+  border-color: #00a2ff;
+  background: #00a2ff;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .primary-btn:hover:not(:disabled) {
-  background: #f39c12;
-  border-color: #f39c12;
+  background: #0088ee;
+  border-color: #0088ee;
 }
 
 .full {
@@ -292,7 +292,7 @@ button:disabled {
 }
 
 .task-main span {
-  color: #ffd839;
+  color: #00a2ff;
   font-size: 12px;
   font-weight: 500;
 }
