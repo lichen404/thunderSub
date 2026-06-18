@@ -94,11 +94,9 @@ export default function App() {
     try {
       await window.api.openSubtitleSaveFolder(savePath);
     } catch {
-      setViewFallbackIds((prev) => {
-        const next = new Set(prev);
-        next.add(subtitleId);
-        return next;
-      });
+      // File not found - remove task so user can re-download
+      await window.api.removeTask(videoPath, subtitleId);
+      setTasks((prev) => prev.filter((t) => !(t.videoPath === videoPath && t.subtitle.id === subtitleId)));
     }
   };
 

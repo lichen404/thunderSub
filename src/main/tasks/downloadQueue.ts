@@ -28,6 +28,16 @@ export class DownloadQueue extends EventEmitter {
     return [...this.tasks];
   }
 
+  remove(videoPath: string, subtitleId: string): boolean {
+    const index = this.tasks.findIndex(
+      (t) => t.videoPath === videoPath && t.subtitle.id === subtitleId
+    );
+    if (index === -1) return false;
+    this.tasks.splice(index, 1);
+    this.emit('update', this.list());
+    return true;
+  }
+
   add(input: AddTaskInput): DownloadTask {
     const now = new Date().toISOString();
     const task: DownloadTask = {

@@ -12,6 +12,7 @@ declare global {
       listHistory: () => Promise<HistoryRecord[]>;
       parseSubtitles: (videoPath: string) => Promise<ParseResult>;
       createTask: (payload: { videoPath: string; subtitle: SubtitleItem }) => Promise<DownloadTask>;
+      removeTask: (videoPath: string, subtitleId: string) => Promise<boolean>;
       openSubtitleSaveFolder: (savePath: string) => Promise<boolean>;
       listTasks: () => Promise<DownloadTask[]>;
       onTaskUpdate: (handler: (tasks: DownloadTask[]) => void) => () => void;

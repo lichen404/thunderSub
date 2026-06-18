@@ -92,6 +92,10 @@ export function registerIpc(mainWindow: BrowserWindow): void {
     });
   });
 
+  ipcMain.handle('task:remove', (_event, videoPath: string, subtitleId: string) => {
+    return queue.remove(videoPath, subtitleId);
+  });
+
   ipcMain.handle('subtitle:openSaveFolder', async (_event, savePath: string) => {
     await access(savePath, constants.F_OK);
     await shell.showItemInFolder(savePath);
