@@ -6,6 +6,7 @@ import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import type { DownloadTask, SubtitleItem } from '../shared/types';
 import { HttpClient } from './network/httpClient';
 import { createParser } from './parser/parserFactory';
+import { DEFAULT_THUNDER_API_BASE } from './parser/thunderParser';
 import { storeService } from './store';
 import { DownloadQueue } from './tasks/downloadQueue';
 
@@ -65,6 +66,15 @@ export function registerIpc(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('settings:get', () => storeService.getSettings());
   ipcMain.handle('settings:update', (_event, patch) => storeService.updateSettings(patch));
+  ipcMain.handle('settings:getThunderApiUrl', () => {
+    const settings = storeService.getSettings();
+    const apiBase = settings.thunderApiBase?.trim();
+    let url = apiBase || DEFAULT_THUNDER_API_BASE;
+    if (url.endsWith('/oracle')) {
+      url = `${url}/subtitle`;
+    }
+    return url;
+  });
   ipcMain.handle('history:list', () => storeService.listHistory());
   ipcMain.handle('task:list', () => queue.list());
 

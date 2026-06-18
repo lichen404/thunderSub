@@ -7,6 +7,7 @@ const api = {
   getSettings: (): Promise<AppSettings> => ipcRenderer.invoke('settings:get'),
   updateSettings: (patch: Partial<AppSettings>): Promise<AppSettings> =>
     ipcRenderer.invoke('settings:update', patch),
+  getThunderApiUrl: (): Promise<string> => ipcRenderer.invoke('settings:getThunderApiUrl'),
   listHistory: () => ipcRenderer.invoke('history:list'),
   parseSubtitles: (videoPath: string): Promise<ParseResult> => ipcRenderer.invoke('subtitle:parse', videoPath),
   createTask: (payload: { videoPath: string; subtitle: SubtitleItem }): Promise<DownloadTask> =>

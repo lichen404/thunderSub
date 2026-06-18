@@ -21,17 +21,24 @@ export default function App() {
   const [viewFallbackIds, setViewFallbackIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<AppTab>('addVideo');
   const [showAbout, setShowAbout] = useState(false);
+  const [thunderApiUrl, setThunderApiUrl] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedMessage, setSavedMessage] = useState('');
+  const [committedLanguage, setCommittedLanguage] = useState<AppLanguage>('zh-CN');
 
   useEffect(() => {
     void (async () => {
-      const [initialSettings, initialHistory, initialTasks] = await Promise.all([
+      const [initialSettings, initialHistory, initialTasks, initialApiUrl] = await Promise.all([
         window.api.getSettings(),
         window.api.listHistory(),
-        window.api.listTasks()
+        window.api.listTasks(),
+        window.api.getThunderApiUrl()
       ]);
       setSettings(initialSettings);
+      setCommittedLanguage(initialSettings.language);
       setHistory(initialHistory);
       setTasks(initialTasks);
+      setThunderApiUrl(initialApiUrl);
     })();
 
     const off = window.api.onTaskUpdate((nextTasks) => {
@@ -41,7 +48,7 @@ export default function App() {
     return off;
   }, []);
 
-  const language: AppLanguage = settings?.language ?? 'zh-CN';
+  const language: AppLanguage = committedLanguage;
   const text = useMemo(() => (key: Parameters<typeof t>[1]) => t(language, key), [language]);
 
   const pickVideo = async () => {
@@ -98,12 +105,24 @@ export default function App() {
     if (!settings) return;
     const folder = await window.api.openDirectory();
     if (!folder) return;
-    setSettings(await window.api.updateSettings({ downloadDir: folder }));
+    setSettings({ ...settings, downloadDir: folder });
   };
 
   const saveSettings = async () => {
-    if (!settings) return;
-    setSettings(await window.api.updateSettings(settings));
+    if (!settings || isSaving) return;
+    setIsSaving(true);
+    setSavedMessage('');
+    try {
+      const updatedSettings = await window.api.updateSettings(settings);
+      setSettings(updatedSettings);
+      setCommittedLanguage(updatedSettings.language);
+      setSavedMessage(language === 'en-US' ? 'Settings saved ✓' : '设置已保存 ✓');
+      setTimeout(() => setSavedMessage(''), 2500);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const subtitleTaskMap = useMemo(() => {
@@ -191,7 +210,6 @@ export default function App() {
               setActiveTab('settings');
               setShowAbout(false);
             }}
-            title={text('settings')}
           >
             <div className="icon-wrapper">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -199,6 +217,7 @@ export default function App() {
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
               </svg>
             </div>
+            <span className="nav-label">{text('settings')}</span>
           </button>
 
           <button
@@ -357,20 +376,48 @@ export default function App() {
             {activeTab === 'downloadHistory' && (
               <section className="card">
                 <h2>{text('downloadHistory')}</h2>
-                <div className="history-table">
-                  <div className="history-head">
-                    <span>{text('time')}</span>
-                    <span>{text('file')}</span>
-                    <span>{text('status')}</span>
-                    <span>{text('savePath')}</span>
-                  </div>
+                <div className="list subtitle-list-scroll">
                   {history.length === 0 && <div className="muted">{text('noHistory')}</div>}
                   {history.map((item) => (
-                    <div className="history-row" key={item.id}>
-                      <span>{new Date(item.createdAt).toLocaleString()}</span>
-                      <span>{getFileName(item.videoPath)}</span>
-                      <span className={item.status === 'success' ? 'ok' : 'bad'}>{item.status}</span>
-                      <span title={item.savePath}>{item.savePath}</span>
+                    <div className="list-item subtitle-entry" key={item.id}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '85%', padding: '2px 0', flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <strong style={{ fontSize: '14px', color: '#eef4ff' }}>{getFileName(item.videoPath)}</strong>
+                          <span className={item.status === 'success' ? 'ok' : 'bad'} style={{ fontSize: '10px', lineHeight: 1.2 }}>
+                            {item.status === 'success'
+                              ? language === 'en-US'
+                                ? 'Completed'
+                                : '已完成'
+                              : language === 'en-US'
+                                ? 'Failed'
+                                : '失败'}
+                          </span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '500' }}>
+                            {new Date(item.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <span style={{
+                          fontSize: '12px',
+                          color: '#626f7a',
+                          wordBreak: 'break-all',
+                          display: 'block',
+                          lineHeight: 1.4
+                        }}>
+                          {item.savePath}
+                        </span>
+                        {item.error && (
+                          <small style={{ color: '#ff6b81', display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                            {item.error}
+                          </small>
+                        )}
+                      </div>
+                      {item.status === 'success' && (
+                        <button onClick={() => {
+                          void window.api.openSubtitleSaveFolder(item.savePath).catch(() => {});
+                        }}>
+                          {language === 'en-US' ? 'View' : '查看'}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -384,12 +431,8 @@ export default function App() {
                   <label>{text('uiLanguage')}</label>
                   <select
                     value={settings.language}
-                    onChange={async (event) =>
-                      setSettings(
-                        await window.api.updateSettings({
-                          language: event.target.value as AppLanguage
-                        })
-                      )
+                    onChange={(event) =>
+                      setSettings({ ...settings, language: event.target.value as AppLanguage })
                     }
                   >
                     <option value="zh-CN">中文</option>
@@ -408,29 +451,19 @@ export default function App() {
                 <div className="field">
                   <label>{text('namingRule')}</label>
                   <input
+                    placeholder="{videoName}.{lang}.{format}"
                     value={settings.namingRule}
-                    onChange={(event) => setSettings({ ...settings, namingRule: event.target.value })}
-                  />
-                </div>
-
-                <div className="field">
-                  <label>{text('parser')}</label>
-                  <select
-                    value={settings.parserMode}
                     onChange={(event) =>
-                      setSettings({ ...settings, parserMode: event.target.value as AppSettings['parserMode'] })
+                      setSettings({ ...settings, namingRule: event.target.value })
                     }
-                  >
-                    <option value="mock">mock</option>
-                    <option value="thunder">thunder</option>
-                  </select>
+                  />
                 </div>
 
                 <div className="field">
                   <label>{text('apiBase')}</label>
                   <input
-                    value={settings.thunderApiBase ?? ''}
-                    onChange={(event) => setSettings({ ...settings, thunderApiBase: event.target.value })}
+                    value={thunderApiUrl || text('apiBaseUnset')}
+                    readOnly
                   />
                 </div>
 
@@ -439,6 +472,7 @@ export default function App() {
                     <label>{text('timeout')}</label>
                     <input
                       type="number"
+                      min={100}
                       value={settings.requestTimeoutMs}
                       onChange={(event) =>
                         setSettings({ ...settings, requestTimeoutMs: Number(event.target.value) || 10000 })
@@ -449,6 +483,7 @@ export default function App() {
                     <label>{text('retry')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={settings.requestRetry}
                       onChange={(event) =>
                         setSettings({ ...settings, requestRetry: Number(event.target.value) || 2 })
@@ -459,16 +494,26 @@ export default function App() {
                     <label>{text('concurrency')}</label>
                     <input
                       type="number"
+                      min={1}
                       value={settings.requestConcurrency}
                       onChange={(event) =>
-                        setSettings({ ...settings, requestConcurrency: Number(event.target.value) || 1 })
+                        setSettings({ ...settings, requestConcurrency: Number(event.target.value) || 3 })
                       }
                     />
                   </div>
                 </div>
 
-                <button className="primary-btn full" onClick={saveSettings}>
-                  {text('save')}
+                {savedMessage && <div className="toast-success">{savedMessage}</div>}
+
+                <button className="primary-btn full" onClick={saveSettings} disabled={isSaving}>
+                  {isSaving ? (
+                    <span className="btn-loading">
+                      <span className="spinner" />
+                      <span>{language === 'en-US' ? 'Saving...' : '保存中...'}</span>
+                    </span>
+                  ) : (
+                    text('save')
+                  )}
                 </button>
               </section>
             )}

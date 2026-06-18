@@ -20,7 +20,6 @@ const defaultSettings: AppSettings = {
 };
 
 const store = new Store<AppStore>({
-  projectName: 'thunder-subtitle-downloader',
   name: 'thunder-subtitle-downloader',
   defaults: {
     settings: defaultSettings,

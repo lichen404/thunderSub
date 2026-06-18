@@ -10,8 +10,10 @@
   --text-muted: #62727d;
   --text-accent: #00a2ff;
   --glow-shadow: 0 0 16px rgba(0, 162, 255, 0.25);
-  --glass-bg: rgba(9, 11, 14, 0.95);
-  --card-border: 1px solid rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(9, 11, 14, 0.88);
+  --card-border: 1px solid rgba(255, 255, 255, 0.06);
+  --success-color: #34d399;
+  --divider-color: rgba(255, 255, 255, 0.04);
 }
 
 * {
@@ -192,9 +194,10 @@ body {
   background: var(--glass-bg);
   border: var(--card-border);
   border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
+  padding: 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   margin-bottom: 24px;
 }
 
@@ -231,9 +234,8 @@ body {
   letter-spacing: 0.8px;
 }
 
-/* Premium Inputs and Selects */
-input,
-select {
+/* Premium Inputs */
+input {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -245,11 +247,56 @@ select {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-input:focus,
-select:focus {
+input:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(0, 162, 255, 0.15);
   background: rgba(0, 0, 0, 0.6);
+}
+
+/* Premium Select - Custom styled dropdown */
+select {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #eef4ff;
+  padding: 12px 38px 12px 14px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238c9ba5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+select:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(0, 162, 255, 0.15);
+  background-color: rgba(0, 0, 0, 0.6);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300a2ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select option {
+  background: #121212;
+  color: #eef4ff;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: none;
+}
+
+select option:hover,
+select option:checked {
+  background: rgba(0, 162, 255, 0.2);
+  color: #ffffff;
 }
 
 /* Button Stylings - Glowing & Slick transition */
@@ -398,49 +445,17 @@ button:disabled {
   margin-top: 4px;
 }
 
-/* History Grid / Table styling - Sleeker design */
-.history-table {
-  display: grid;
-  gap: 10px;
-}
 
-.history-head,
-.history-row {
-  display: grid;
-  grid-template-columns: 160px 1.5fr 110px 2fr;
-  gap: 16px;
-  align-items: center;
-  font-size: 13px;
-}
 
-.history-head {
-  color: var(--text-muted);
-  font-weight: 700;
-  padding: 0 14px;
-  text-transform: uppercase;
-  font-size: 10px;
-  letter-spacing: 0.8px;
-}
 
-.history-row {
-  background: rgba(255, 255, 255, 0.01);
-  border: var(--card-border);
-  border-radius: 12px;
-  padding: 14px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.history-row:hover {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
 
-.history-row span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+
+
+
+
+
+
 
 /* Glower status tags */
 .ok {
@@ -546,4 +561,81 @@ button:disabled {
   color: #ff6b81;
   display: block;
   margin-top: 6px;
+}
+
+/* ===== Settings UI Enhancements ===== */
+
+/* Section Divider */
+.settings-divider {
+  height: 1px;
+  background: var(--divider-color);
+  margin: 24px 0;
+  border: none;
+}
+
+/* Success Toast */
+.toast-success {
+  margin-bottom: 14px;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  background: rgba(52, 211, 153, 0.08);
+  color: var(--success-color);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes toastFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Read-only input styling */
+input[readOnly] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+input[readOnly]:focus {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Field hover enhancement */
+.field:hover label {
+  color: var(--text-accent);
+  transition: color 0.25s ease;
 }

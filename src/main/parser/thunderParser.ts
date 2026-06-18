@@ -120,6 +120,8 @@ export async function getMp4Duration(filePath: string): Promise<number> {
   return 0;
 }
 
+export const DEFAULT_THUNDER_API_BASE = 'http://api-shoulei-ssl.xunlei.com/oracle/subtitle';
+
 export class ThunderParser implements SubtitleParserAdapter {
   name = 'thunder';
 
@@ -145,7 +147,7 @@ export class ThunderParser implements SubtitleParserAdapter {
     }
 
     // 4. Build API URL
-    let baseUrl = this.apiBase ? this.apiBase.trim() : 'http://api-shoulei-ssl.xunlei.com/oracle/subtitle';
+    let baseUrl = this.apiBase ? this.apiBase.trim() : DEFAULT_THUNDER_API_BASE;
     if (baseUrl.endsWith('/oracle')) {
       baseUrl = `${baseUrl}/subtitle`;
     }
