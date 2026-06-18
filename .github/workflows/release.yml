@@ -10,6 +10,11 @@ on:
 permissions:
   contents: write
 
+env:
+  # macOS: skip code signing (no certificate in CI)
+  CSC_IDENTITY_AUTO_DISCOVERY: false
+  ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
+
 jobs:
   # ── Build & release on tag push ──────────────────────────────
   release:
@@ -19,13 +24,10 @@ jobs:
         include:
           - os: windows-latest
             build-cmd: pnpm run build && electron-builder --win --publish always
-            arch: x64
           - os: macos-latest
             build-cmd: pnpm run build && electron-builder --mac --publish always
-            arch: x64
           - os: ubuntu-latest
             build-cmd: pnpm run build && electron-builder --linux --publish always
-            arch: x64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -33,8 +35,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,7 +57,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ThunderSub-${{ github.ref_name }}-${{ matrix.os }}
-          path: release/*.exe release/*.dmg release/*.AppImage release/*.deb release/*.zip release/*.blockmap
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.AppImage
+            release/*.deb
+            release/*.zip
+            release/*.blockmap
+            release/*.yml
+            release/*.json
           if-no-files-found: ignore
 
   # ── CI check on every push / PR (quick build, no release) ───
@@ -73,8 +81,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -84,9 +90,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Generate icons
-        run: node scripts/generate-icons.js
 
       - name: Lint
         run: pnpm lint
