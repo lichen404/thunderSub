@@ -12,7 +12,7 @@ const defaultSettings: AppSettings = {
   language: 'zh-CN',
   downloadDir: path.join(os.homedir(), 'Downloads'),
   namingRule: '{videoName}.{lang}.{format}',
-  parserMode: 'mock',
+  parserMode: 'thunder',
   thunderApiBase: '',
   requestTimeoutMs: 10000,
   requestRetry: 2,

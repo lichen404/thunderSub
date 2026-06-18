@@ -11,6 +11,7 @@ const api = {
   parseSubtitles: (videoPath: string): Promise<ParseResult> => ipcRenderer.invoke('subtitle:parse', videoPath),
   createTask: (payload: { videoPath: string; subtitle: SubtitleItem }): Promise<DownloadTask> =>
     ipcRenderer.invoke('task:create', payload),
+  openSubtitleSaveFolder: (savePath: string): Promise<boolean> => ipcRenderer.invoke('subtitle:openSaveFolder', savePath),
   listTasks: (): Promise<DownloadTask[]> => ipcRenderer.invoke('task:list'),
   onTaskUpdate: (handler: (tasks: DownloadTask[]) => void) => {
     const listener = (_event: unknown, tasks: DownloadTask[]) => handler(tasks);
@@ -20,4 +21,3 @@ const api = {
 };
 
 contextBridge.exposeInMainWorld('api', api);
-

@@ -1,6 +1,8 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { access } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import type { DownloadTask, SubtitleItem } from '../shared/types';
 import { HttpClient } from './network/httpClient';
 import { createParser } from './parser/parserFactory';
@@ -78,5 +80,14 @@ export function registerIpc(mainWindow: BrowserWindow): void {
       savePath: buildSavePath(payload.videoPath, payload.subtitle)
     });
   });
-}
 
+  ipcMain.handle('subtitle:openSaveFolder', async (_event, savePath: string) => {
+    await access(savePath, constants.F_OK);
+    const folderPath = path.dirname(savePath);
+    const openResult = await shell.openPath(folderPath);
+    if (openResult) {
+      throw new Error(openResult);
+    }
+    return true;
+  });
+}

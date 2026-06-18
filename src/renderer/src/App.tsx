@@ -17,6 +17,8 @@ export default function App() {
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [error, setError] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
+  const [viewFallbackIds, setViewFallbackIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<AppTab>('addVideo');
   const [showAbout, setShowAbout] = useState(false);
 
@@ -52,22 +54,43 @@ export default function App() {
   };
 
   const parseSubtitles = async () => {
-    if (!videoPath) return;
+    if (!videoPath || isParsing) return;
     setError('');
+    setIsParsing(true);
     try {
       const result = await window.api.parseSubtitles(videoPath);
       setSubtitles(result.subtitles);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setIsParsing(false);
     }
   };
 
   const downloadSubtitle = async (subtitle: SubtitleItem) => {
     setError('');
     try {
+      setViewFallbackIds((prev) => {
+        const next = new Set(prev);
+        next.delete(subtitle.id);
+        return next;
+      });
       await window.api.createTask({ videoPath, subtitle });
     } catch (err) {
       setError((err as Error).message);
+    }
+  };
+
+  const openSubtitleFolder = async (subtitleId: string, savePath: string) => {
+    setError('');
+    try {
+      await window.api.openSubtitleSaveFolder(savePath);
+    } catch {
+      setViewFallbackIds((prev) => {
+        const next = new Set(prev);
+        next.add(subtitleId);
+        return next;
+      });
     }
   };
 
@@ -81,6 +104,32 @@ export default function App() {
   const saveSettings = async () => {
     if (!settings) return;
     setSettings(await window.api.updateSettings(settings));
+  };
+
+  const subtitleTaskMap = useMemo(() => {
+    const map = new Map<string, DownloadTask>();
+    for (const task of tasks) {
+      if (task.videoPath !== videoPath) continue;
+      const key = task.subtitle.id;
+      const prev = map.get(key);
+      if (!prev || new Date(task.updatedAt).getTime() > new Date(prev.updatedAt).getTime()) {
+        map.set(key, task);
+      }
+    }
+    return map;
+  }, [tasks, videoPath]);
+
+  const getTaskStatusLabel = (task: DownloadTask): string => {
+    if (language === 'en-US') {
+      if (task.status === 'pending') return 'Pending';
+      if (task.status === 'running') return 'Downloading';
+      if (task.status === 'success') return 'Completed';
+      return 'Failed';
+    }
+    if (task.status === 'pending') return '等待中';
+    if (task.status === 'running') return '下载中';
+    if (task.status === 'success') return '已完成';
+    return '失败';
   };
 
   if (!settings) return null;
@@ -195,19 +244,34 @@ export default function App() {
                   <label>{text('selectedVideo')}</label>
                   <div className="row">
                     <input value={videoPath} placeholder="-" readOnly />
-                    <button onClick={parseSubtitles} disabled={!videoPath}>
-                      {text('parse')}
+                    <button onClick={parseSubtitles} disabled={!videoPath || isParsing}>
+                      {isParsing ? `${text('parse')}...` : text('parse')}
                     </button>
                   </div>
                 </div>
 
                 <div className="field">
                   <label>{text('subtitles')}</label>
-                  <div className="list">
+                  <div className="list subtitle-list-scroll">
+                    {isParsing && <div className="muted">Loading...</div>}
                     {subtitles.length === 0 && <div className="muted">{text('noSubtitles')}</div>}
-                    {subtitles.map((item) => (
-                      <div className="list-item" key={item.id}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '85%', padding: '2px 0' }}>
+                    {subtitles.map((item) => {
+                      const task = subtitleTaskMap.get(item.id);
+                      const canView = task?.status === 'success' && !viewFallbackIds.has(item.id);
+                      const isDownloading = task?.status === 'running' || task?.status === 'pending';
+                      const buttonText = canView
+                        ? language === 'en-US'
+                          ? 'View'
+                          : '查看'
+                        : isDownloading
+                          ? language === 'en-US'
+                            ? 'Downloading'
+                            : '下载中'
+                          : text('download');
+
+                      return (
+                      <div className="list-item subtitle-entry" key={item.id}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '85%', padding: '2px 0', flex: 1 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <strong style={{ fontSize: '14px', color: '#eef4ff' }}>{item.language}</strong>
                             <span style={{
@@ -240,30 +304,51 @@ export default function App() {
                               {item.name}
                             </span>
                           )}
+                          {task && (
+                            <div className="subtitle-task-info">
+                              <div className="subtitle-task-row">
+                                <span
+                                  className={`task-status ${
+                                    task.status === 'success'
+                                      ? 'ok'
+                                      : task.status === 'failed'
+                                        ? 'bad'
+                                        : ''
+                                  }`}
+                                >
+                                  {getTaskStatusLabel(task)}
+                                </span>
+                                <span className="task-progress-text">
+                                  {Math.round(task.progress)}%
+                                </span>
+                              </div>
+                              <div className="task-progress-track">
+                                <div
+                                  className="task-progress-fill"
+                                  style={{ width: `${Math.max(0, Math.min(100, task.progress))}%` }}
+                                />
+                              </div>
+                              {task.error && (
+                                <small>{task.error}</small>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        <button onClick={() => downloadSubtitle(item)}>{text('download')}</button>
+                        <button
+                          onClick={() => {
+                            if (canView && task) {
+                              void openSubtitleFolder(item.id, task.savePath);
+                              return;
+                            }
+                            void downloadSubtitle(item);
+                          }}
+                          disabled={isDownloading}
+                        >
+                          {buttonText}
+                        </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label>
-                    {text('status')} / {text('progress')}
-                  </label>
-                  <div className="list">
-                    {tasks.length === 0 && <div className="muted">-</div>}
-                    {tasks.slice(0, 5).map((task) => (
-                      <div className="task-item" key={task.id}>
-                        <div className="task-main">
-                          <strong>{getFileName(task.videoPath)}</strong>
-                          <span>
-                            {task.status} · {task.progress}%
-                          </span>
-                        </div>
-                        {task.error && <small>{task.error}</small>}
-                      </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 </div>
               </section>
