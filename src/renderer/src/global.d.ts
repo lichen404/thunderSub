@@ -8,6 +8,7 @@ declare global {
       getSettings: () => Promise<AppSettings>;
       updateSettings: (patch: Partial<AppSettings>) => Promise<AppSettings>;
       getThunderApiUrl: () => Promise<string>;
+      clearAllData: () => Promise<AppSettings>;
       listHistory: () => Promise<HistoryRecord[]>;
       parseSubtitles: (videoPath: string) => Promise<ParseResult>;
       createTask: (payload: { videoPath: string; subtitle: SubtitleItem }) => Promise<DownloadTask>;

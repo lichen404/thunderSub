@@ -76,6 +76,7 @@ export function registerIpc(mainWindow: BrowserWindow): void {
     return url;
   });
   ipcMain.handle('history:list', () => storeService.listHistory());
+  ipcMain.handle('settings:clearAll', () => storeService.clearAll());
   ipcMain.handle('task:list', () => queue.list());
 
   ipcMain.handle('subtitle:parse', async (_event, videoPath: string) => {

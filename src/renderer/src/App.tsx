@@ -25,6 +25,7 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [savedMessage, setSavedMessage] = useState('');
   const [committedLanguage, setCommittedLanguage] = useState<AppLanguage>('zh-CN');
+  const [toastError, setToastError] = useState('');
 
   useEffect(() => {
     void (async () => {
@@ -122,6 +123,25 @@ export default function App() {
       setError((err as Error).message);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!settings) return;
+    const confirmed = language === 'en-US'
+      ? window.confirm('This will reset all settings and clear download history. Continue?')
+      : window.confirm('将重置所有设置并清空下载历史，确定继续吗？');
+    if (!confirmed) return;
+    try {
+      const defaultSettings = await window.api.clearAllData();
+      setSettings(defaultSettings);
+      setCommittedLanguage(defaultSettings.language);
+      setHistory([]);
+      setThunderApiUrl(await window.api.getThunderApiUrl());
+      setSavedMessage(language === 'en-US' ? 'Data reset ✓' : '数据已重置 ✓');
+      setTimeout(() => setSavedMessage(''), 2500);
+    } catch (err) {
+      setError((err as Error).message);
     }
   };
 
@@ -375,8 +395,13 @@ export default function App() {
 
             {activeTab === 'downloadHistory' && (
               <section className="card">
-                <h2>{text('downloadHistory')}</h2>
-                <div className="list subtitle-list-scroll">
+                <div className="card-title-row">
+                  <h2>{text('downloadHistory')}</h2>
+                  {history.length > 0 && (
+                    <span className="history-count">{history.length}/20</span>
+                  )}
+                </div>
+                <div className="list history-list-scroll">
                   {history.length === 0 && <div className="muted">{text('noHistory')}</div>}
                   {history.map((item) => (
                     <div className="list-item subtitle-entry" key={item.id}>
@@ -412,8 +437,16 @@ export default function App() {
                         )}
                       </div>
                       {item.status === 'success' && (
-                        <button onClick={() => {
-                          void window.api.openSubtitleSaveFolder(item.savePath).catch(() => {});
+                        <button onClick={async () => {
+                          try {
+                            await window.api.openSubtitleSaveFolder(item.savePath);
+                          } catch {
+                            const msg = language === 'en-US'
+                              ? `Failed to open: ${item.savePath}`
+                              : `无法打开文件：${item.savePath}`;
+                            setToastError(msg);
+                            setTimeout(() => setToastError(''), 3500);
+                          }
                         }}>
                           {language === 'en-US' ? 'View' : '查看'}
                         </button>
@@ -515,6 +548,14 @@ export default function App() {
                     text('save')
                   )}
                 </button>
+
+                <button
+                  className="danger-btn full"
+                  onClick={handleClearAll}
+                  style={{ marginTop: '12px' }}
+                >
+                  {language === 'en-US' ? 'Reset All Data' : '重置所有数据'}
+                </button>
               </section>
             )}
           </>
@@ -522,6 +563,17 @@ export default function App() {
       </main>
 
       {error && <div className="error">{error}</div>}
+
+      {toastError && (
+        <div className="toast-error-float">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>{toastError}</span>
+        </div>
+      )}
     </div>
   );
 }

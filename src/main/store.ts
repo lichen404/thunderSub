@@ -41,6 +41,11 @@ export const storeService = {
   },
   appendHistory(record: HistoryRecord): void {
     const history = [record, ...store.get('history')];
-    store.set('history', history.slice(0, 1000));
+    store.set('history', history.slice(0, 20));
+  },
+  clearAll(): AppSettings {
+    store.set('history', []);
+    store.set('settings', { ...defaultSettings });
+    return { ...defaultSettings };
   }
 };
