@@ -63,13 +63,6 @@ pnpm dist:all
 
 构建产物输出到 `release/` 目录。
 
-### 更新图标
-
-如果修改了 `assets/icon.svg`，需要重新生成图标文件：
-
-```bash
-pnpm run icons
-```
 
 ## 项目结构
 
@@ -82,8 +75,6 @@ thunderSub/
 │   └── icon.icns            # macOS 应用图标
 ├── build/
 │   └── installer.nsh        # NSIS 安装程序自定义配置
-├── scripts/
-│   └── generate-icons.js    # 图标生成脚本
 ├── src/
 │   ├── main/                # Electron 主进程
 │   │   ├── index.ts         # 窗口创建、应用生命周期
