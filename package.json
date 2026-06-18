@@ -1,7 +1,11 @@
 {
   "name": "thunder-subtitle-downloader",
   "version": "0.1.0",
-  "private": true,
+  "description": "ThunderSub - 迅雷影音智能字幕下载工具",
+  "author": {
+    "name": "lichen",
+    "email": "f360family@gmail.com"
+  },
   "packageManager": "pnpm@9.15.0",
   "main": "out/main/index.js",
   "scripts": {
@@ -42,6 +46,7 @@
   "build": {
     "appId": "com.lichen.thundersub",
     "productName": "ThunderSub",
+    "copyright": "Copyright © 2024 lichen",
     "directories": {
       "output": "release",
       "buildResources": "assets"
