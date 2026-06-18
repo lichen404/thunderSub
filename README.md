@@ -2,7 +2,6 @@
 
 > 迅雷影音智能字幕下载工具 — 自动解析本地视频，匹配并下载迅雷高清字幕
 
-[![Build](https://github.com/lichen/thunderSub/actions/workflows/release.yml/badge.svg)](https://github.com/lichen/thunderSub/actions/workflows/release.yml)
 
 ---
 
