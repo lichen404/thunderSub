@@ -12,10 +12,10 @@
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "icons": "node scripts/generate-icons.js",
-    "dist": "pnpm run icons && pnpm run build && electron-builder --win",
-    "dist:mac": "pnpm run icons && pnpm run build && electron-builder --mac",
-    "dist:linux": "pnpm run icons && pnpm run build && electron-builder --linux",
-    "dist:all": "pnpm run icons && pnpm run build && electron-builder --win --mac --linux",
+    "dist": "pnpm run build && electron-builder --win",
+    "dist:mac": "pnpm run build && electron-builder --mac",
+    "dist:linux": "pnpm run build && electron-builder --linux",
+    "dist:all": "pnpm run build && electron-builder --win --mac --linux",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
