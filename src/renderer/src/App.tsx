@@ -27,6 +27,12 @@ export default function App() {
   const [committedLanguage, setCommittedLanguage] = useState<AppLanguage>('zh-CN');
   const [toastError, setToastError] = useState('');
   const [isMaximized, setIsMaximized] = useState(false);
+  const [updateState, setUpdateState] = useState<{
+    status: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error';
+    version?: string;
+    progress?: number;
+    message?: string;
+  }>({ status: 'idle' });
 
   useEffect(() => {
     void (async () => {
@@ -54,9 +60,36 @@ export default function App() {
       setIsMaximized(maximized);
     });
 
+    const offUpdateChecking = window.api.onUpdateChecking(() => {
+      setUpdateState({ status: 'checking' });
+    });
+    const offUpdateAvailable = window.api.onUpdateAvailable((info) => {
+      setUpdateState({ status: 'available', version: info.version });
+    });
+    const offUpdateNotAvail = window.api.onUpdateNotAvailable(() => {
+      setUpdateState({ status: 'not-available' });
+      setTimeout(() => setUpdateState({ status: 'idle' }), 4000);
+    });
+    const offUpdateProgress = window.api.onUpdateDownloadProgress((p) => {
+      setUpdateState((s) => ({ ...s, status: 'downloading', progress: p.percent }));
+    });
+    const offUpdateDownloaded = window.api.onUpdateDownloaded(() => {
+      setUpdateState({ status: 'downloaded' });
+    });
+    const offUpdateError = window.api.onUpdateError((msg) => {
+      setUpdateState({ status: 'error', message: msg });
+      setTimeout(() => setUpdateState((s) => (s.status === 'error' ? { status: 'idle' } : s)), 5000);
+    });
+
     return () => {
       offTask();
       offMaximize();
+      offUpdateChecking();
+      offUpdateAvailable();
+      offUpdateNotAvail();
+      offUpdateProgress();
+      offUpdateDownloaded();
+      offUpdateError();
     };
   }, []);
 
@@ -305,6 +338,26 @@ export default function App() {
             </div>
           </button>
         </div>
+
+        {/* Update indicator */}
+        {updateState.status !== 'idle' && (
+          <div className="sidebar-update-indicator">
+            {updateState.status === 'checking' && <span className="update-dot checking" title="Checking for updates" />}
+            {updateState.status === 'available' && (
+              <button className="update-dot available" title={`Update v${updateState.version} available`} onClick={() => window.api.downloadUpdate()} />
+            )}
+            {updateState.status === 'downloading' && (
+              <div className="update-dl-progress" title={`Downloading... ${updateState.progress}%`}>
+                <div className="update-dl-fill" style={{ width: `${updateState.progress ?? 0}%` }} />
+              </div>
+            )}
+            {updateState.status === 'downloaded' && (
+              <button className="update-dot downloaded" title="Update ready — click to install" onClick={() => window.api.quitAndInstall()} />
+            )}
+            {updateState.status === 'not-available' && <span className="update-dot latest" title="Up to date" />}
+            {updateState.status === 'error' && <span className="update-dot error" title={updateState.message || 'Update check failed'} />}
+          </div>
+        )}
       </aside>
 
       <main className="main-viewport">
@@ -625,6 +678,67 @@ export default function App() {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
           <span>{toastError}</span>
+        </div>
+      )}
+
+      {/* Update notification banner */}
+      {updateState.status === 'available' && (
+        <div className="update-banner">
+          <div className="update-banner-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>
+              {language === 'en-US'
+                ? `v${updateState.version} available — download & install`
+                : `v${updateState.version} 可用 — 下载并安装`}
+            </span>
+          </div>
+          <div className="update-banner-actions">
+            <button className="update-banner-btn" onClick={() => window.api.downloadUpdate()}>
+              {language === 'en-US' ? 'Download' : '下载'}
+            </button>
+            <button className="update-banner-close" onClick={() => setUpdateState({ status: 'idle' })}>
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M2 2l8 8M10 2L2 10" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {updateState.status === 'downloading' && (
+        <div className="update-banner">
+          <div className="update-banner-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>
+              {language === 'en-US' ? 'Downloading update...' : '正在下载更新...'}
+              <span className="update-banner-percent">{updateState.progress ?? 0}%</span>
+            </span>
+          </div>
+          <div className="update-banner-track">
+            <div className="update-banner-fill" style={{ width: `${updateState.progress ?? 0}%` }} />
+          </div>
+        </div>
+      )}
+
+      {updateState.status === 'downloaded' && (
+        <div className="update-banner installed">
+          <div className="update-banner-content">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 11 12 14 22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+            <span>
+              {language === 'en-US' ? 'Update ready — restart to apply' : '更新已就绪 — 重启以应用'}
+            </span>
+          </div>
+          <button className="update-banner-btn primary" onClick={() => window.api.quitAndInstall()}>
+            {language === 'en-US' ? 'Restart' : '重启'}
+          </button>
         </div>
       )}
     </div>

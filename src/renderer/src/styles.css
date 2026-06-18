@@ -776,3 +776,196 @@ input[readOnly]:focus {
   }
 }
 
+/* ===== Auto-Update UI ===== */
+
+/* Sidebar update indicator (bottom of sidebar) */
+.sidebar-update-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 12px;
+  width: 100%;
+}
+
+.update-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+  border: none;
+  padding: 0;
+  cursor: default;
+  transition: transform 0.2s ease;
+}
+
+.update-dot.checking {
+  background: #62727d;
+  animation: pulse 1.2s ease infinite;
+}
+
+.update-dot.available,
+.update-dot.downloaded {
+  background: #34d399;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+}
+
+.update-dot.available:hover,
+.update-dot.downloaded:hover {
+  transform: scale(1.4);
+}
+
+.update-dot.latest {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.update-dot.error {
+  background: #e74c3c;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Download progress ring in sidebar */
+.update-dl-progress {
+  width: 32px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.update-dl-fill {
+  height: 100%;
+  background: var(--text-accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Update notification banner (bottom-right overlay) */
+.update-banner {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(12, 16, 20, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+  animation: toastSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 440px;
+}
+
+.update-banner.installed {
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.update-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #d6dee5;
+  flex: 1;
+  min-width: 0;
+}
+
+.update-banner-content svg {
+  flex-shrink: 0;
+  color: var(--text-accent);
+}
+
+.update-banner.installed .update-banner-content svg {
+  color: #34d399;
+}
+
+.update-banner-percent {
+  color: var(--text-accent);
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.update-banner-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+}
+
+.update-banner-fill {
+  height: 100%;
+  background: var(--text-accent);
+  transition: width 0.3s ease;
+}
+
+.update-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.update-banner-btn {
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #d6dee5;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.update-banner-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  transform: none;
+}
+
+.update-banner-btn.primary {
+  background: var(--text-accent);
+  border-color: var(--text-accent);
+  color: #fff;
+}
+
+.update-banner-btn.primary:hover {
+  background: #0088ee;
+  box-shadow: 0 2px 8px rgba(0, 162, 255, 0.3);
+}
+
+.update-banner-close {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #62727d;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.update-banner-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #d6dee5;
+  box-shadow: none;
+  transform: none;
+}
+

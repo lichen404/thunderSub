@@ -32,6 +32,41 @@ const api = {
     const listener = (_event: unknown, maximized: boolean) => handler(maximized);
     ipcRenderer.on('window:maximizeChange', listener);
     return () => ipcRenderer.removeListener('window:maximizeChange', listener);
+  },
+
+  // --- Auto-update ---
+  checkForUpdates: (): Promise<void> => ipcRenderer.invoke('update:check'),
+  downloadUpdate: (): Promise<void> => ipcRenderer.invoke('update:download'),
+  quitAndInstall: (): Promise<void> => ipcRenderer.invoke('update:install'),
+  onUpdateChecking: (handler: () => void) => {
+    const listener = () => handler();
+    ipcRenderer.on('update:checking', listener);
+    return () => ipcRenderer.removeListener('update:checking', listener);
+  },
+  onUpdateAvailable: (handler: (info: { version: string; releaseNotes?: string }) => void) => {
+    const listener = (_event: unknown, info: { version: string; releaseNotes?: string }) => handler(info);
+    ipcRenderer.on('update:available', listener);
+    return () => ipcRenderer.removeListener('update:available', listener);
+  },
+  onUpdateNotAvailable: (handler: () => void) => {
+    const listener = () => handler();
+    ipcRenderer.on('update:not-available', listener);
+    return () => ipcRenderer.removeListener('update:not-available', listener);
+  },
+  onUpdateDownloadProgress: (handler: (progress: { percent: number }) => void) => {
+    const listener = (_event: unknown, progress: { percent: number }) => handler(progress);
+    ipcRenderer.on('update:download-progress', listener);
+    return () => ipcRenderer.removeListener('update:download-progress', listener);
+  },
+  onUpdateDownloaded: (handler: () => void) => {
+    const listener = () => handler();
+    ipcRenderer.on('update:downloaded', listener);
+    return () => ipcRenderer.removeListener('update:downloaded', listener);
+  },
+  onUpdateError: (handler: (message: string) => void) => {
+    const listener = (_event: unknown, message: string) => handler(message);
+    ipcRenderer.on('update:error', listener);
+    return () => ipcRenderer.removeListener('update:error', listener);
   }
 };
 

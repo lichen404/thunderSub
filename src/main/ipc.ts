@@ -9,6 +9,7 @@ import { createParser } from './parser/parserFactory';
 import { DEFAULT_THUNDER_API_BASE } from './parser/thunderParser';
 import { storeService } from './store';
 import { DownloadQueue } from './tasks/downloadQueue';
+import { checkForUpdates, downloadUpdate, quitAndInstall } from './updater';
 
 function buildSavePath(videoPath: string, subtitle: SubtitleItem): string {
   const settings = storeService.getSettings();
@@ -129,5 +130,18 @@ export function registerIpc(mainWindow: BrowserWindow): void {
 
   mainWindow.on('unmaximize', () => {
     mainWindow.webContents.send('window:maximizeChange', false);
+  });
+
+  // --- Auto-update ---
+  ipcMain.handle('update:check', () => {
+    checkForUpdates();
+  });
+
+  ipcMain.handle('update:download', () => {
+    downloadUpdate();
+  });
+
+  ipcMain.handle('update:install', () => {
+    quitAndInstall();
   });
 }

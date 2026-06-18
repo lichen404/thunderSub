@@ -23,6 +23,17 @@ declare global {
       closeWindow: () => Promise<void>;
       isMaximized: () => Promise<boolean>;
       onMaximizeChange: (handler: (maximized: boolean) => void) => () => void;
+
+      // --- Auto-update ---
+      checkForUpdates: () => Promise<void>;
+      downloadUpdate: () => Promise<void>;
+      quitAndInstall: () => Promise<void>;
+      onUpdateChecking: (handler: () => void) => () => void;
+      onUpdateAvailable: (handler: (info: { version: string; releaseNotes?: string }) => void) => () => void;
+      onUpdateNotAvailable: (handler: () => void) => () => void;
+      onUpdateDownloadProgress: (handler: (progress: { percent: number }) => void) => () => void;
+      onUpdateDownloaded: (handler: () => void) => () => void;
+      onUpdateError: (handler: (message: string) => void) => () => void;
     };
   }
 }
