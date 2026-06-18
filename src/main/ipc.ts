@@ -93,11 +93,7 @@ export function registerIpc(mainWindow: BrowserWindow): void {
 
   ipcMain.handle('subtitle:openSaveFolder', async (_event, savePath: string) => {
     await access(savePath, constants.F_OK);
-    const folderPath = path.dirname(savePath);
-    const openResult = await shell.openPath(folderPath);
-    if (openResult) {
-      throw new Error(openResult);
-    }
+    await shell.showItemInFolder(savePath);
     return true;
   });
 }
