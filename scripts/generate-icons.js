@@ -1,0 +1,83 @@
+/**
+ * Generate app icons for ThunderSub
+ *
+ * Converts assets/icon.svg to:
+ *   - assets/icon.png   (512×512, for electron-builder app icon)
+ *   - assets/icon.ico   (Windows ICO, for NSIS installer)
+ *
+ * Usage: node scripts/generate-icons.js
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const ASSETS = path.join(__dirname, '..', 'assets');
+
+/**
+ * Create a .ico file from a PNG buffer.
+ */
+function createIco(pngBuffer) {
+  const pngSize = pngBuffer.length;
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0);       // reserved
+  header.writeUInt16LE(1, 2);       // ICO type
+  header.writeUInt16LE(1, 4);       // 1 image
+
+  const entry = Buffer.alloc(16);
+  entry.writeUInt8(0, 0);           // width (0 = 256)
+  entry.writeUInt8(0, 1);           // height (0 = 256)
+  entry.writeUInt8(0, 2);           // colors
+  entry.writeUInt8(0, 3);           // reserved
+  entry.writeUInt16LE(1, 4);        // planes
+  entry.writeUInt16LE(32, 6);       // bpp
+  entry.writeUInt32LE(pngSize, 8);  // image size
+  entry.writeUInt32LE(22, 12);      // offset (header 6 + entry 16 = 22)
+
+  return Buffer.concat([header, entry, pngBuffer]);
+}
+
+async function main() {
+  console.log('🔧 Generating app icons...\n');
+
+  // Ensure assets directory exists
+  fs.mkdirSync(ASSETS, { recursive: true });
+
+  // Check if sharp is available
+  try {
+    require.resolve('sharp');
+  } catch {
+    console.log('📦 sharp not found — installing...');
+    require('child_process').execSync('npm install --no-save sharp', {
+      cwd: ASSETS,
+      stdio: 'inherit'
+    });
+  }
+
+  const sharp = require('sharp');
+
+  const svgBuffer = fs.readFileSync(path.join(ASSETS, 'icon.svg'));
+
+  // 512×512 PNG for electron-builder app icon
+  console.log('  → assets/icon.png (512×512)');
+  await sharp(svgBuffer)
+    .resize(512, 512)
+    .png()
+    .toFile(path.join(ASSETS, 'icon.png'));
+
+  // 256×256 PNG → ICO for NSIS installer
+  console.log('  → assets/icon.ico (256×256)');
+  const png256 = await sharp(svgBuffer)
+    .resize(256, 256)
+    .png()
+    .toBuffer();
+  fs.writeFileSync(path.join(ASSETS, 'icon.ico'), createIco(png256));
+
+  console.log('\n✅ Done!');
+  console.log('   - assets/icon.png  (app icon)');
+  console.log('   - assets/icon.ico  (installer icon)');
+}
+
+main().catch((err) => {
+  console.error('❌ Error:', err.message);
+  process.exit(1);
+});
