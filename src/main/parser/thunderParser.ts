@@ -114,6 +114,7 @@ export async function getMp4Duration(filePath: string): Promise<number> {
     }
   } catch (e) {
     // fallback
+    console.warn(`Failed to parse MP4 duration for ${filePath}, fallback to 0`, e);
   } finally {
     await file.close();
   }
