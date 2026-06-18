@@ -4,6 +4,7 @@
  * Converts assets/icon.svg to:
  *   - assets/icon.png   (512×512, for electron-builder app icon)
  *   - assets/icon.ico   (Windows ICO, for NSIS installer)
+ *   - assets/icon.icns  (macOS ICNS, for .dmg app icon)
  *
  * Usage: node scripts/generate-icons.js
  */
@@ -12,6 +13,33 @@ const fs = require('fs');
 const path = require('path');
 
 const ASSETS = path.join(__dirname, '..', 'assets');
+
+/**
+ * Create a minimal .icns file containing a single ic07 (128x128) PNG entry.
+ * Full .icns can have multiple sizes; this covers Retina @1x display.
+ */
+function createIcns(png128Buffer, png256Buffer) {
+  const icons = [
+    { type: 'ic07', data: png128Buffer }, // 128×128
+    { type: 'ic08', data: png256Buffer }  // 256×256
+  ];
+
+  let body = Buffer.alloc(0);
+  for (const icon of icons) {
+    const entry = icon.data;
+    const header = Buffer.alloc(8);
+    header.write(icon.type, 0, 4, 'ascii');      // OSType
+    header.writeUInt32BE(8 + entry.length, 4);    // entry length
+    body = Buffer.concat([body, header, entry]);
+  }
+
+  const totalSize = 8 + body.length;
+  const header = Buffer.alloc(8);
+  header.write('icns', 0, 4, 'ascii');            // magic
+  header.writeUInt32BE(totalSize, 4);              // total file size
+
+  return Buffer.concat([header, body]);
+}
 
 /**
  * Create a .ico file from a PNG buffer.
@@ -72,9 +100,18 @@ async function main() {
     .toBuffer();
   fs.writeFileSync(path.join(ASSETS, 'icon.ico'), createIco(png256));
 
+  // 128×128 & 256×256 PNG → ICNS for macOS
+  console.log('  → assets/icon.icns (128×128 + 256×256)');
+  const png128 = await sharp(svgBuffer)
+    .resize(128, 128)
+    .png()
+    .toBuffer();
+  fs.writeFileSync(path.join(ASSETS, 'icon.icns'), createIcns(png128, png256));
+
   console.log('\n✅ Done!');
   console.log('   - assets/icon.png  (app icon)');
-  console.log('   - assets/icon.ico  (installer icon)');
+  console.log('   - assets/icon.ico  (Windows installer icon)');
+  console.log('   - assets/icon.icns (macOS app icon)');
 }
 
 main().catch((err) => {

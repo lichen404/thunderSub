@@ -8,8 +8,10 @@
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "icons": "node scripts/generate-icons.js",
-    "dist": "pnpm run icons && pnpm run build && electron-builder --win --publish always",
-    "dist:no-publish": "pnpm run icons && pnpm run build && electron-builder --win",
+    "dist": "pnpm run icons && pnpm run build && electron-builder --win",
+    "dist:mac": "pnpm run icons && pnpm run build && electron-builder --mac",
+    "dist:linux": "pnpm run icons && pnpm run build && electron-builder --linux",
+    "dist:all": "pnpm run icons && pnpm run build && electron-builder --win --mac --linux",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
@@ -57,8 +59,9 @@
       "releaseType": "draft"
     },
     "nsis": {
-      "oneClick": true,
+      "oneClick": false,
       "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
       "installerIcon": "assets/icon.ico",
       "uninstallerIcon": "assets/icon.ico",
       "installerHeaderIcon": "assets/icon.ico",
@@ -70,7 +73,7 @@
       "artifactName": "${productName}-Setup-${version}.${ext}",
       "include": "build/installer.nsh",
       "menuCategory": false,
-      "deleteAppDataOnUninstall": false,
+      "deleteAppDataOnUninstall": true,
       "displayLanguageSelector": false
     },
     "win": {
@@ -78,6 +81,36 @@
         "nsis"
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "category": "public.app-category.video",
+      "icon": "assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "category": "Video",
+      "icon": "assets/icon.png"
     }
   }
 }

@@ -1,0 +1,95 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  # ── Build & release on tag push ──────────────────────────────
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            build-cmd: pnpm run build && electron-builder --win --publish always
+            arch: x64
+          - os: macos-latest
+            build-cmd: pnpm run build && electron-builder --mac --publish always
+            arch: x64
+          - os: ubuntu-latest
+            build-cmd: pnpm run build && electron-builder --linux --publish always
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate icons
+        run: node scripts/generate-icons.js
+
+      - name: Build & publish (${{ matrix.os }})
+        run: ${{ matrix.build-cmd }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ThunderSub-${{ github.ref_name }}-${{ matrix.os }}
+          path: release/*.exe release/*.dmg release/*.AppImage release/*.deb release/*.zip release/*.blockmap
+          if-no-files-found: ignore
+
+  # ── CI check on every push / PR (quick build, no release) ───
+  ci:
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate icons
+        run: node scripts/generate-icons.js
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm run build
