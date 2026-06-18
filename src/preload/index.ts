@@ -21,6 +21,17 @@ const api = {
     const listener = (_event: unknown, tasks: DownloadTask[]) => handler(tasks);
     ipcRenderer.on('task:update', listener);
     return () => ipcRenderer.removeListener('task:update', listener);
+  },
+
+  // --- Window controls ---
+  minimizeWindow: (): Promise<void> => ipcRenderer.invoke('window:minimize'),
+  maximizeWindow: (): Promise<void> => ipcRenderer.invoke('window:maximize'),
+  closeWindow: (): Promise<void> => ipcRenderer.invoke('window:close'),
+  isMaximized: (): Promise<boolean> => ipcRenderer.invoke('window:isMaximized'),
+  onMaximizeChange: (handler: (maximized: boolean) => void) => {
+    const listener = (_event: unknown, maximized: boolean) => handler(maximized);
+    ipcRenderer.on('window:maximizeChange', listener);
+    return () => ipcRenderer.removeListener('window:maximizeChange', listener);
   }
 };
 

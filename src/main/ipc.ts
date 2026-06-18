@@ -101,4 +101,33 @@ export function registerIpc(mainWindow: BrowserWindow): void {
     await shell.showItemInFolder(savePath);
     return true;
   });
+
+  // --- Window controls ---
+  ipcMain.handle('window:minimize', () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.handle('window:maximize', () => {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
+
+  ipcMain.handle('window:close', () => {
+    mainWindow.close();
+  });
+
+  ipcMain.handle('window:isMaximized', () => {
+    return mainWindow.isMaximized();
+  });
+
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window:maximizeChange', true);
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window:maximizeChange', false);
+  });
 }

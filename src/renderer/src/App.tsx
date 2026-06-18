@@ -26,27 +26,38 @@ export default function App() {
   const [savedMessage, setSavedMessage] = useState('');
   const [committedLanguage, setCommittedLanguage] = useState<AppLanguage>('zh-CN');
   const [toastError, setToastError] = useState('');
+  const [isMaximized, setIsMaximized] = useState(false);
 
   useEffect(() => {
     void (async () => {
-      const [initialSettings, initialHistory, initialTasks, initialApiUrl] = await Promise.all([
+      const [initialSettings, initialHistory, initialTasks, initialApiUrl, maximized] = await Promise.all([
         window.api.getSettings(),
         window.api.listHistory(),
         window.api.listTasks(),
-        window.api.getThunderApiUrl()
+        window.api.getThunderApiUrl(),
+        window.api.isMaximized()
       ]);
       setSettings(initialSettings);
       setCommittedLanguage(initialSettings.language);
       setHistory(initialHistory);
       setTasks(initialTasks);
       setThunderApiUrl(initialApiUrl);
+      setIsMaximized(maximized);
     })();
 
-    const off = window.api.onTaskUpdate((nextTasks) => {
+    const offTask = window.api.onTaskUpdate((nextTasks) => {
       setTasks(nextTasks);
       void window.api.listHistory().then((nextHistory) => setHistory(nextHistory));
     });
-    return off;
+
+    const offMaximize = window.api.onMaximizeChange((maximized) => {
+      setIsMaximized(maximized);
+    });
+
+    return () => {
+      offTask();
+      offMaximize();
+    };
   }, []);
 
   const language: AppLanguage = committedLanguage;
@@ -173,6 +184,48 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Custom Title Bar */}
+      <header className="title-bar">
+        <div className="title-bar-drag" />
+        <div className="title-bar-controls">
+          <button
+            className="win-control win-minimize"
+            onClick={() => window.api.minimizeWindow()}
+            aria-label="Minimize"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12">
+              <rect x="1" y="5.5" width="10" height="1" fill="currentColor" />
+            </svg>
+          </button>
+          <button
+            className="win-control win-maximize"
+            onClick={() => window.api.maximizeWindow()}
+            aria-label={isMaximized ? 'Restore' : 'Maximize'}
+          >
+            {isMaximized ? (
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <rect x="2.5" y="0.5" width="9" height="9" rx="1" fill="none" stroke="currentColor" strokeWidth="1" />
+                <rect x="0.5" y="2.5" width="9" height="9" rx="1" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <rect x="1" y="1" width="10" height="10" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+              </svg>
+            )}
+          </button>
+          <button
+            className="win-control win-close"
+            onClick={() => window.api.closeWindow()}
+            aria-label="Close"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12">
+              <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div className="app-body">
       <aside className="app-sidebar">
         <div className="sidebar-brand">
           <div className="brand-wrapper" style={{ position: 'relative' }}>
@@ -259,11 +312,11 @@ export default function App() {
           <section className="card">
             <h2>{text('appTitle')}</h2>
             <p className="muted" style={{ margin: '12px 0' }}>
-              Version 1.0.0 (MVP)
+              Version 1.0.0
             </p>
             <p className="muted" style={{ lineHeight: 1.6 }}>
               这是一个基于 Electron + React + TypeScript 构建的高性能迅雷影音视频字幕下载工具。
-              支持自动解析本地视频对应的迅雷高清字幕，提供多语言与多格式一键下载和任务队列并发管理。
+              支持自动解析本地视频对应的迅雷高清字幕，提供多语言与多格式下载和任务队列并发管理。
             </p>
           </section>
         ) : (
@@ -559,6 +612,8 @@ export default function App() {
           </>
         )}
       </main>
+
+      </div>{/* end app-body */}
 
       {error && <div className="error">{error}</div>}
 

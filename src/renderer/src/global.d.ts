@@ -16,6 +16,13 @@ declare global {
       openSubtitleSaveFolder: (savePath: string) => Promise<boolean>;
       listTasks: () => Promise<DownloadTask[]>;
       onTaskUpdate: (handler: (tasks: DownloadTask[]) => void) => () => void;
+
+      // --- Window controls ---
+      minimizeWindow: () => Promise<void>;
+      maximizeWindow: () => Promise<void>;
+      closeWindow: () => Promise<void>;
+      isMaximized: () => Promise<boolean>;
+      onMaximizeChange: (handler: (maximized: boolean) => void) => () => void;
     };
   }
 }

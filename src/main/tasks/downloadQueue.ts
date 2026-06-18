@@ -94,7 +94,7 @@ export class DownloadQueue extends EventEmitter {
       });
 
       await pipeline(
-        Readable.fromWeb(response.body as unknown as globalThis.ReadableStream),
+        Readable.fromWeb(response.body as any),
         updateProgress,
         createWriteStream(task.savePath)
       );
