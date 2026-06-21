@@ -1,6 +1,6 @@
 {
   "name": "thunder-subtitle-downloader",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "ThunderSub - 迅雷影音智能字幕下载工具",
   "author": {
     "name": "lichen",
@@ -90,11 +90,17 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         },
         {
           "target": "zip",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}",
@@ -105,11 +111,15 @@
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "deb",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}",
