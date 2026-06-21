@@ -342,7 +342,6 @@ export default function App() {
         {/* Update indicator */}
         {updateState.status !== 'idle' && (
           <div className="sidebar-update-indicator">
-            {updateState.status === 'checking' && <span className="update-dot checking" title="Checking for updates" />}
             {updateState.status === 'available' && (
               <button className="update-dot available" title={`Update v${updateState.version} available`} onClick={() => window.api.downloadUpdate()} />
             )}
