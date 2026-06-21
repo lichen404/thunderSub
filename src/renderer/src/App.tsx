@@ -3,7 +3,7 @@ import type { AppLanguage, AppSettings, DownloadTask, HistoryRecord, SubtitleIte
 import { t } from './i18n';
 import './styles.css';
 
-type AppTab = 'addVideo' | 'downloadHistory' | 'settings';
+type AppTab = 'addVideo' | 'downloadHistory' | 'settings'|'about';
 
 function getFileName(fullPath: string): string {
   const windowsPath = fullPath.split('\\');
@@ -20,7 +20,6 @@ export default function App() {
   const [isParsing, setIsParsing] = useState(false);
   const [viewFallbackIds, setViewFallbackIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<AppTab>('addVideo');
-  const [showAbout, setShowAbout] = useState(false);
   const [thunderApiUrl, setThunderApiUrl] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [savedMessage, setSavedMessage] = useState('');
@@ -277,7 +276,7 @@ export default function App() {
             className={`nav-button ${activeTab === 'addVideo' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('addVideo');
-              setShowAbout(false);
+              
             }}
           >
             <div className="icon-wrapper">
@@ -294,7 +293,6 @@ export default function App() {
             className={`nav-button ${activeTab === 'downloadHistory' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('downloadHistory');
-              setShowAbout(false);
             }}
           >
             <div className="icon-wrapper">
@@ -312,7 +310,7 @@ export default function App() {
             className={`nav-button footer-button ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('settings');
-              setShowAbout(false);
+             
             }}
           >
             <div className="icon-wrapper">
@@ -325,8 +323,10 @@ export default function App() {
           </button>
 
           <button
-            className={`nav-button footer-button ${showAbout ? 'active' : ''}`}
-            onClick={() => setShowAbout(!showAbout)}
+            className={`nav-button footer-button ${activeTab === 'about' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab('about');
+            }}
             title="About"
           >
             <div className="icon-wrapper">
@@ -360,7 +360,7 @@ export default function App() {
       </aside>
 
       <main className="main-viewport">
-        {showAbout ? (
+        {activeTab === 'about' ? (
           <section className="card">
             <h2>{text('appTitle')}</h2>
             <p className="muted" style={{ margin: '12px 0' }}>
