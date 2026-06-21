@@ -6,18 +6,25 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号 (e.g., 0.2.0)'
+        required: true
+        type: string
 
 permissions:
   contents: write
+  actions: read
 
 env:
   CSC_IDENTITY_AUTO_DISCOVERY: false
   ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
 
 jobs:
-  # ── Build & release on tag push ──────────────────────────────
+  # ── Build & release (tag push or manual dispatch) ────────────
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         include:
@@ -30,6 +37,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+
+      - name: Bump version (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm version ${{ inputs.version }} --no-git-tag-version
+          echo "Bumped to v${{ inputs.version }}"
 
       - uses: pnpm/action-setup@v6
 
@@ -59,7 +72,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ThunderSub-${{ github.ref_name }}-${{ matrix.os }}
+          name: ThunderSub-${{ github.ref_name || inputs.version }}-${{ matrix.os }}
           path: |
             release/*.exe
             release/*.dmg
@@ -73,7 +86,7 @@ jobs:
 
   # ── CI check on every push / PR (quick build, no release) ───
   ci:
-    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') && github.event_name != 'workflow_dispatch' }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]

@@ -58,9 +58,9 @@
     "icon": "assets/icon.png",
     "publish": {
       "provider": "github",
-      "owner": "lichen",
+      "owner": "lichen404",
       "repo": "thunderSub",
-      "releaseType": "draft"
+      "releaseType": "release"
     },
     "nsis": {
       "oneClick": false,
