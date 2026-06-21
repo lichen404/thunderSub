@@ -29,11 +29,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build-cmd: pnpm run build && electron-builder --win --publish always
+            build-cmd: pnpm run build && pnpm exec electron-builder --win --publish always
           - os: macos-latest
-            build-cmd: pnpm run build && electron-builder --mac --publish always
+            build-cmd: pnpm run build && pnpm exec electron-builder --mac --publish always
           - os: ubuntu-latest
-            build-cmd: pnpm run build && electron-builder --linux --publish always
+            build-cmd: pnpm run build && pnpm exec electron-builder --linux --publish always
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
