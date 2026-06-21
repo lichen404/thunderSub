@@ -33,14 +33,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+          corepack: true
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -66,9 +64,6 @@ jobs:
         shell: bash
         run: pnpm install --frozen-lockfile
         timeout-minutes: 15
-
-      - name: Generate icons
-        run: node scripts/generate-icons.js
 
       - name: Build & publish (${{ matrix.os }})
         run: ${{ matrix.build-cmd }}
@@ -101,14 +96,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
+          corepack: true
 
       - name: Cache pnpm store
         uses: actions/cache@v4
