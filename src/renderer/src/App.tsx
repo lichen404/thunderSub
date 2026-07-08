@@ -158,7 +158,7 @@ export default function App() {
       const updatedSettings = await window.api.updateSettings(settings);
       setSettings(updatedSettings);
       setCommittedLanguage(updatedSettings.language);
-      setSavedMessage(language === 'en-US' ? 'Settings saved ✓' : '设置已保存 ✓');
+      setSavedMessage(updatedSettings.language === 'en-US' ? 'Settings saved ✓' : '设置已保存 ✓');
       setTimeout(() => setSavedMessage(''), 2500);
     } catch (err) {
       setError((err as Error).message);
