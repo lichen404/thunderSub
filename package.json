@@ -15,7 +15,10 @@
     "dist:mac": "pnpm run build && electron-builder --mac",
     "dist:linux": "pnpm run build && electron-builder --linux",
     "dist:all": "pnpm run build && electron-builder --win --mac --linux",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "update-server": "node scripts/local-update-server/serve.mjs",
+    "update-server:no-update": "node scripts/local-update-server/serve.mjs no-update",
+    "update-server:error": "node scripts/local-update-server/serve.mjs error"
   },
   "dependencies": {
     "electron-store": "^10.0.1",

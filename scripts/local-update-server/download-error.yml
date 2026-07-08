@@ -1,0 +1,8 @@
+version: 9.9.9
+files:
+  - url: ThunderSub-Setup-9.9.9.exe
+    sha512: WRONG-HASH-INTENTIONALLY-TO-TEST-CHECKSUM-ERROR
+    size: 1024
+path: ThunderSub-Setup-9.9.9.exe
+sha512: WRONG-HASH-INTENTIONALLY-TO-TEST-CHECKSUM-ERROR
+releaseDate: '2099-01-01T00:00:00.000Z'

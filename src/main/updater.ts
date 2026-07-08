@@ -1,8 +1,9 @@
 import { autoUpdater } from 'electron-updater';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.forceDevUpdateConfig = true;
 
 export function setupAutoUpdater(mainWindow: BrowserWindow): void {
   const send = (channel: string, data?: unknown) => {
@@ -39,9 +40,14 @@ export function setupAutoUpdater(mainWindow: BrowserWindow): void {
     send('update:error', err.message);
   });
 
-  // Check for updates in production only
-  if (!process.env.ELECTRON_RENDERER_URL) {
-    // Delay check to avoid slowing down app startup
+  const isDev = !!process.env.ELECTRON_RENDERER_URL;
+
+  if (isDev) {
+    console.log('[updater] Dev mode — skipping auto-update check on startup.');
+    console.log('[updater] Current version:', app.getVersion());
+    console.log('[updater] Call window.api.checkForUpdates() manually to test.');
+  } else {
+    // Production: auto-check after startup
     setTimeout(() => {
       autoUpdater.checkForUpdates().catch(() => {
         // Silently ignore check errors (e.g. no network)

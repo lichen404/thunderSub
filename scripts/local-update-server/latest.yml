@@ -1,0 +1,8 @@
+version: 0.4.0
+files:
+  - url: ThunderSub-Setup-0.4.0.exe
+    sha512: HVHKN2v3/BsmHl9+Wq0frOdtWuDOTCziR4FtLHYB0L36R4szE007IKFecnKiN+UWfKyMZU5PY6tRsP8mIKkzaQ==
+    size: 1024
+path: ThunderSub-Setup-0.4.0.exe
+sha512: HVHKN2v3/BsmHl9+Wq0frOdtWuDOTCziR4FtLHYB0L36R4szE007IKFecnKiN+UWfKyMZU5PY6tRsP8mIKkzaQ==
+releaseDate: '2026-07-08T00:00:00.000Z'
