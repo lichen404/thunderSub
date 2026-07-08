@@ -26,6 +26,7 @@ export default function App() {
   const [committedLanguage, setCommittedLanguage] = useState<AppLanguage>('zh-CN');
   const [toastError, setToastError] = useState('');
   const [isMaximized, setIsMaximized] = useState(false);
+  const [appVersion, setAppVersion] = useState('');
   const [updateState, setUpdateState] = useState<{
     status: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error';
     version?: string;
@@ -35,12 +36,13 @@ export default function App() {
 
   useEffect(() => {
     void (async () => {
-      const [initialSettings, initialHistory, initialTasks, initialApiUrl, maximized] = await Promise.all([
+      const [initialSettings, initialHistory, initialTasks, initialApiUrl, maximized, version] = await Promise.all([
         window.api.getSettings(),
         window.api.listHistory(),
         window.api.listTasks(),
         window.api.getThunderApiUrl(),
-        window.api.isMaximized()
+        window.api.isMaximized(),
+        window.api.getAppVersion()
       ]);
       setSettings(initialSettings);
       setCommittedLanguage(initialSettings.language);
@@ -48,6 +50,7 @@ export default function App() {
       setTasks(initialTasks);
       setThunderApiUrl(initialApiUrl);
       setIsMaximized(maximized);
+      setAppVersion(version);
     })();
 
     const offTask = window.api.onTaskUpdate((nextTasks) => {
@@ -364,7 +367,7 @@ export default function App() {
           <section className="card">
             <h2>{text('appTitle')}</h2>
             <p className="muted" style={{ margin: '12px 0' }}>
-              Version 1.0.0
+              Version {appVersion || '...'}
             </p>
             <p className="muted" style={{ lineHeight: 1.6 }}>
               这是一个基于 Electron + React + TypeScript 构建的高性能迅雷影音视频字幕下载工具。

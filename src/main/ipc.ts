@@ -2,7 +2,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { access } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import type { DownloadTask, SubtitleItem } from '../shared/types';
 import { HttpClient } from './network/httpClient';
 import { createParser } from './parser/parserFactory';
@@ -79,6 +79,8 @@ export function registerIpc(mainWindow: BrowserWindow): void {
   ipcMain.handle('history:list', () => storeService.listHistory());
   ipcMain.handle('settings:clearAll', () => storeService.clearAll());
   ipcMain.handle('task:list', () => queue.list());
+
+  ipcMain.handle('app:getVersion', () => app.getVersion());
 
   ipcMain.handle('subtitle:parse', async (_event, videoPath: string) => {
     const parser = createParser(storeService.getSettings());
