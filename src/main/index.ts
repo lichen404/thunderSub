@@ -3,6 +3,21 @@ import { app, BrowserWindow } from 'electron';
 import { registerIpc } from './ipc';
 import { setupAutoUpdater } from './updater';
 
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+
+if (!gotSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    const windows = BrowserWindow.getAllWindows();
+    if (windows.length > 0) {
+      const win = windows[0];
+      if (win.isMinimized()) win.restore();
+      win.focus();
+    }
+  });
+}
+
 function createWindow(): BrowserWindow {
   const window = new BrowserWindow({
     width: 1360,
